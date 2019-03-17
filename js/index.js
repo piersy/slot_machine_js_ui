@@ -1,3 +1,6 @@
+//import { Roller } from './roller.js';
+//import * as rol from './roller.js';
+/*jshint esversion: 6 */ 
 // Scene
 let scene = document.createElement("div");
 // @ts-ignore
@@ -18,6 +21,12 @@ controls.style.gridColumn = "3";
 
 // Adds a range input and disply to controls and returns a range input and a div
 // to display the value.
+/**
+ * @param {string} name
+ * @param {string | number} min
+ * @param {string | number} max
+ * @param {string | number} val
+ */
 function addRangeControl(name, min, max, val) {
   let id = name + '_ID';
 
@@ -45,7 +54,7 @@ function addRangeControl(name, min, max, val) {
 
 
 // perspective
-let perspective = addRangeControl("Perspective", 1, 1000, 400);
+let perspective = addRangeControl("Perspective", 1, 1000, 1000);
 
 perspective.input.onchange = perspective.input.oninput = function () {
   let p = perspective.input.value + "px";
@@ -94,24 +103,47 @@ updateTransform(); //Ensure value initialised
 
 
 
-
-/*
-  // create a new div element and give it some content 
-  var newDiv = document.createElement("div"); 
-  var newContent = document.createTextNode("Hi there and greetings!");
-  // add the text node to the newly created div.
-  newDiv.appendChild(newContent);
-  // add the newly created element and its content into the DOM 
-  var currentDiv = document.getElementById("div1"); 
-  // document.body.insertBefore(newDiv, currentDiv);
-  currentDiv.appendChild(newDiv);
-
-*/
 let numImgs = 5;
-let numSegs = 50;
-let segHeight = 20;
-let segWidth = 200;
+let segsPerImg = 5;
+let rollerHeight = 400;
+let rollerWidth = 200;
+let numSegs = numImgs * segsPerImg;
+
+/* 
+The roller is formed from a collection of segments, each segment is rotated
+around the X axis by an amount inversely proportional to the total number of
+segments, and then each segment is Z translated such that the edges of these
+segments or are aligned and just touching this means the height of the roller
+will be double the Z translation of each element. Given that we know the
+required height of the roller, we know that the Z translation will be half the
+roller height. We need to calculate the segment height such that the translation
+required to line up the edges will be equal to half the roller height. We can
+find the angle in between each segment and we know the opposite side which is
+half the roller height so we just need to calculate the adjacent which will be
+equal to half the segment height.
+ */
+
+let zTranslate = rollerHeight/2; //segHeight / 2 * Math.tan(angle);
+
+// The angle from the edge of a segment to the centre of the roller. Angle
+// inside a regular polygon is (n-2) × PI / n where n is the number of sides. We
+// divide by a further 2 since that angle is shared by 2 adjacent segments.
+let angle = (numSegs - 2) * Math.PI / 2 / numSegs;
+
+//Ok we need to make sure that the segments divide into the image heights
+//perfectly, damn!
+
+// The height of each segment. 
+let segHeight = 2 * zTranslate / Math.tan(angle);
+console.log("segHeight", segHeight);
+// Has to be a whole number to have a chance of dividing exactly into the image height.
+segHeight = Math.round(segHeight);
+
+
+
 let imSrc = "https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1089759.svg";
+
+// This veiwbox neatly encompasses the kitty without too much empty space.
 let wholeImgViewBox = {
   top: 500,
   left: 500,
@@ -119,43 +151,43 @@ let wholeImgViewBox = {
   height: 2000
 };
 
-let imgLength = numImgs * wholeImgViewBox.height;
-let imgSegHeight = imgLength / numSegs;
-let segLength = numSegs * segHeight;
+// Now adjust image bounds to allow for exact division.
 
-/* Determine the "radius"...
-we know the side length divide by 2 to get the (adjacent)
-and we need to find the length to centre point (opposite)
-We find the inner angle of an intersection further divided by 2 since each corner
-is shared by 2 adjacent segments.
+/*
+let diff = wholeImgViewBox.height % segHeight;
+console.log("diff",diff);
+let adjustment = Math.trunc(diff/2);
+wholeImgViewBox.top -= adjustment;
+wholeImgViewBox.height += diff;
 */
 
-// Angle inside a regular polygon is (n-2) × PI / n
-// where n is the number of sides
 
-let angle = (numSegs - 2) * Math.PI / 2 / numSegs;
-let zTranslate = segHeight / 2 * Math.tan(angle);
 
+
+// we want to maintain the same aspect ratio between segs and imgSegs.
+// So widen or lessen the image view to accomodate that.
+let aspect = segHeight/rollerWidth;
+
+//let imgSegHeight = wholeImgViewBox.height / segsPerImg;
+let imgSegHeight = wholeImgViewBox.width * aspect;
+imgSegHeight = Math.round(imgSegHeight);
 
 // @ts-ignore
 roller.style = `
-    width: 200px;
-    height: 200px;
+    width: ${rollerWidth}px;
+    height: ${rollerHeight}px;
     position: relative;
     transform-origin: 50% 50%;
     transform-style: preserve-3d;
 border: 1px solid red;
-margin: 100px;
 `;
-
-
 
 scene.appendChild(roller);
 
 for (let i = 0; i < numSegs; i++) {
 
   let seg = document.createElement("img");
-  seg.setAttribute("width", String(segWidth));
+  seg.setAttribute("width", String(rollerWidth));
   seg.setAttribute("height", String(segHeight));
 
   let imgOffset = (i * imgSegHeight) % wholeImgViewBox.height;
@@ -166,7 +198,7 @@ for (let i = 0; i < numSegs; i++) {
     ${wholeImgViewBox.width}, 
     ${imgSegHeight}))`;
 
-  seg.setAttribute("src", svgView);
+  //seg.setAttribute("src", svgView);
 
   // @ts-ignore
   seg.style = `
@@ -184,10 +216,12 @@ for (let i = 0; i < numSegs; i++) {
 
     top: 50%;
     margin-top: ${-segHeight / 2}px;
+
+    border: 1px solid red;
 `;
 
 
-  seg.style.transform = `rotateX(-${365 * i / numSegs}deg) translateZ(${zTranslate - 10}px)`;
+  seg.style.transform = `rotateX(-${365 * i / numSegs}deg) translateZ(${zTranslate}px)`;
 
 
   roller.appendChild(seg);
