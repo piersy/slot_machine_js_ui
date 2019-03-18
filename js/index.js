@@ -54,7 +54,7 @@ function addRangeControl(name, min, max, val) {
 
 
 // perspective
-let perspective = addRangeControl("Perspective", 1, 1000, 1000);
+let perspective = addRangeControl("Perspective", 1, 2000, 1000);
 
 perspective.input.onchange = perspective.input.oninput = function () {
   let p = perspective.input.value + "px";
@@ -81,7 +81,56 @@ originX.input.onchange = originX.input.oninput = updatePerspectiveOrigin;
 originY.input.onchange = originY.input.oninput = updatePerspectiveOrigin;
 updatePerspectiveOrigin(); //Ensure values initialised
 
+
+/* 
+The roller is formed from a collection of segments, each segment is rotated
+around the X axis by an amount inversely proportional to the total number of
+segments, and then each segment is Z translated such that the edges of these
+segments or are aligned and just touching this means the height of the roller
+will be double the Z translation of each element. Given that we know the
+required height of the roller, we know that the Z translation will be half the
+roller height. We need to calculate the segment height such that the translation
+required to line up the edges will be equal to half the roller height. We can
+find the angle in between each segment and we know the opposite side which is
+half the roller height so we just need to calculate the adjacent which will be
+equal to half the segment height.
+ */
+let rollerWidth = 200;
+let rollerHeight = 400;
+let numImgs = 5;
+let segsPerImg = 5;
+let numSegs = numImgs * segsPerImg;
+
+let zTranslate = rollerHeight/2;
+
+// The angle from the edge of a segment to the centre of the roller. Angle
+// inside a regular polygon is (n-2) × PI / n where n is the number of sides. We
+// divide by a further 2 since that angle is shared by 2 adjacent segments.
+let angle = (numSegs - 2) * Math.PI / 2 / numSegs;
+
+//Ok we need to make sure that the segments divide into the image heights
+//perfectly, damn!
+
+// The height of each segment. 
+let segHeight = 2 * zTranslate / Math.tan(angle);
+//console.log("segHeight", segHeight);
+
+// Helps reduce gaps in rendering to have whole number
+segHeight = Math.round(segHeight);
+
 let roller = document.createElement("div");
+
+
+// @ts-ignore
+roller.style = `
+    width: ${rollerWidth}px;
+    height: ${rollerHeight}px;
+    position: relative;
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;
+    border: 1px solid red;
+    margin:auto;
+`;
 
 // rotate
 let rotateY = addRangeControl("Rotate y", 0, 360, 0);
@@ -102,46 +151,6 @@ rotateZ.input.onchange = rotateZ.input.oninput = updateTransform;
 updateTransform(); //Ensure value initialised
 
 
-
-let numImgs = 5;
-let segsPerImg = 5;
-let rollerHeight = 400;
-let rollerWidth = 200;
-let numSegs = numImgs * segsPerImg;
-
-/* 
-The roller is formed from a collection of segments, each segment is rotated
-around the X axis by an amount inversely proportional to the total number of
-segments, and then each segment is Z translated such that the edges of these
-segments or are aligned and just touching this means the height of the roller
-will be double the Z translation of each element. Given that we know the
-required height of the roller, we know that the Z translation will be half the
-roller height. We need to calculate the segment height such that the translation
-required to line up the edges will be equal to half the roller height. We can
-find the angle in between each segment and we know the opposite side which is
-half the roller height so we just need to calculate the adjacent which will be
-equal to half the segment height.
- */
-
-let zTranslate = rollerHeight/2; //segHeight / 2 * Math.tan(angle);
-
-// The angle from the edge of a segment to the centre of the roller. Angle
-// inside a regular polygon is (n-2) × PI / n where n is the number of sides. We
-// divide by a further 2 since that angle is shared by 2 adjacent segments.
-let angle = (numSegs - 2) * Math.PI / 2 / numSegs;
-
-//Ok we need to make sure that the segments divide into the image heights
-//perfectly, damn!
-
-// The height of each segment. 
-let segHeight = 2 * zTranslate / Math.tan(angle);
-//console.log("segHeight", segHeight);
-
-// Helps reduce gaps in rendering to have whole number
-segHeight = Math.round(segHeight);
-
-
-
 let imSrc = "https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1089759.svg";
 
 // This veiwbox neatly encompasses the kitty without too much empty space.
@@ -151,18 +160,6 @@ let wholeImgViewBox = {
   width: 2000,
   height: 2000
 };
-
-// Now adjust image bounds to allow for exact division. Is this bollocks?
-
-/*
-let diff = wholeImgViewBox.height % segHeight;
-console.log("diff",diff);
-let adjustment = Math.trunc(diff/2);
-wholeImgViewBox.top -= adjustment;
-wholeImgViewBox.height += diff;
-*/
-
-
  
 // we want to maintain the same aspect ratio between segs and imgSegs.
 // So widen or lessen the image view to accomodate that.
@@ -192,15 +189,8 @@ wholeImgViewBox.left = 1500;
 
 let imgSegHeight = wholeImgViewBox.height / segsPerImg;
 
-// @ts-ignore
-roller.style = `
-    width: ${rollerWidth}px;
-    height: ${rollerHeight}px;
-    position: relative;
-    transform-origin: 50% 50%;
-    transform-style: preserve-3d;
-border: 1px solid red;
-`;
+
+
 
 scene.appendChild(roller);
 
@@ -236,7 +226,6 @@ for (let i = 0; i < numSegs; i++) {
 
     top: 50%;
     margin-top: ${-segHeight / 2}px;
-
    /* border: 1px solid red;*/
 `;
 
