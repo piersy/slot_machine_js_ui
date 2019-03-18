@@ -113,7 +113,7 @@ let svgs = [
 
 let frontPanel = document.createElement("div");
 let fps = frontPanel.style;
-fps.background = "rgba(0,0,0,0.25)";
+fps.background = "linear-gradient(black, rgba(0,0,0,0), black)";
 fps.position = "absolute";
 fps.border = "1px solid black";
 fps.width = "100%";
@@ -144,7 +144,6 @@ addCol("7");
 function addRow(row) {
   let d = document.createElement("div");
   d.style = `
-  box-shadow: 10px 5px 5px red;
     background: black;
     grid-row: ${row};
     grid-column: 1/13`;
