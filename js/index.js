@@ -84,7 +84,7 @@ originY.input.onchange = originY.input.oninput = updatePerspectiveOrigin;
 updatePerspectiveOrigin(); //Ensure values initialised
 
 
-let defaultViewBox = new rol.ViewBox(1499, 500, 2, 2000);
+let defaultViewBox = new rol.ViewBox(1750, 525, 2, 2000);
 let svgs = [
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1452684.svg", defaultViewBox),
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1227462.svg", defaultViewBox),
@@ -93,7 +93,7 @@ let svgs = [
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1467855.svg", defaultViewBox),
 ];
 
-let roller = rol.CreateRoller(250, 450, svgs, 5);
+let roller = rol.CreateRoller(280, 350, svgs, 5);
 
 scene.appendChild(roller);
 

@@ -53,7 +53,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     // Find the angle between adjacent segments.
     // Angle inside a regular polygon is (n-2) × PI / n where n is the number of
     // sides.
-    let betweenSides = (numSegs - 2) * Math.PI / 2 / numSegs;
+    let betweenSides = (numSegs - 2) * Math.PI / numSegs;
 
     // Find seg height, it will be twice the adjacent side of the triangle with
     // opposite side of length zTranslate and angle betweenSides/2;
@@ -108,12 +108,13 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
             let imgOffset = j * imgSegHeight;
 
             let svgView = s.url +
-                `#svgView(viewBox(${s.viewBox.left}, 
-                              ${s.viewBox.top + imgOffset}, 
+                `#svgView(viewBox(${s.viewBox.x}, 
+                              ${s.viewBox.y + imgOffset}, 
                               ${s.viewBox.width}, 
                               ${imgSegHeight}))`;
 
             seg.setAttribute("src", svgView);
+            console.log(svgView);
 
             // @ts-ignore
             seg.style = `
