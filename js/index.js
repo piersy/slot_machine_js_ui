@@ -93,7 +93,7 @@ let svgs = [
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1467855.svg", defaultViewBox),
 ];
 
-let roller = rol.CreateRoller(280, 350, svgs, 5);
+let roller = rol.CreateRoller(280, 360, svgs, 5);
 
 scene.appendChild(roller);
 
