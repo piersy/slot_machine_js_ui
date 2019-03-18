@@ -73,13 +73,14 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     position: relative;
     transform-origin: 50% 50%;
     transform-style: preserve-3d;
+    
     /**
      *  margin auto only works for horizontal alignment,
      * for vertical align we need to use top
      * and negative margin
      */
     top: 50%;
-    margin:${-height / 2}px auto;`;
+    margin:${-height / 2}px auto;`;  // Should we even be doing this here, maybe not?
 
     /*
     The default approach taken by fragment identifiers to mapping the viewbox to
@@ -125,7 +126,9 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
             // @ts-ignore
             seg.style = `
                 position: absolute;
-                background: grey;
+/*                 background: grey;
+ */                background-image: linear-gradient(rgb(247, 191, 29), rgb(247, 217, 21));
+
 
                 /* ensure transforms happen around the center of the segment */
                 transform-origin: 50% 50%;
