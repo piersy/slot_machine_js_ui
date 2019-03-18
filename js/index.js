@@ -102,7 +102,7 @@ equal to half the segment height.
 let rollerWidth = 200;
 let rollerHeight = 400;
 let numImgs = 5;
-let segsPerImg = 5;
+let segsPerImg = 4;
 let numSegs = numImgs * segsPerImg;
 
 let zTranslate = rollerHeight/2;
@@ -117,9 +117,9 @@ let segHeight = 2 * zTranslate / Math.tan(angle);
 //console.log("segHeight", segHeight);
 
 // Helps reduce gaps in rendering to just bridge the gap between components
-// but also borks the images a bit
+// but also borks the images a bit when more segs per image are used.
 // could look into overlapping segments, sounds promising.
-//segHeight++;
+segHeight = Math.trunc(segHeight)+1;
 
 let roller = document.createElement("div");
 
