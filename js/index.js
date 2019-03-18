@@ -1,6 +1,10 @@
 //import { Roller } from './roller.js';
 //import * as rol from './roller.js';
-/*jshint esversion: 6 */ 
+/*jshint esversion: 6 */
+/* jshint -W097 */ // Disable warning for using strict on file.
+/*jshint browser: true */ // Disable warning of document undefined.
+'use strict';
+
 // Scene
 let scene = document.createElement("div");
 // @ts-ignore
@@ -37,9 +41,9 @@ function addRangeControl(name, min, max, val) {
 
   let i = document.createElement("input");
   i.type = "range";
-  i.min = min;
-  i.max = max;
-  i.value = val;
+  i.min = String(min);
+  i.max = String(max);
+  i.value = String(val);
   i.id = id;
   controls.appendChild(i);
 
@@ -108,15 +112,14 @@ let zTranslate = rollerHeight/2;
 // divide by a further 2 since that angle is shared by 2 adjacent segments.
 let angle = (numSegs - 2) * Math.PI / 2 / numSegs;
 
-//Ok we need to make sure that the segments divide into the image heights
-//perfectly, damn!
-
 // The height of each segment. 
 let segHeight = 2 * zTranslate / Math.tan(angle);
 //console.log("segHeight", segHeight);
 
-// Helps reduce gaps in rendering to have whole number
-segHeight = Math.round(segHeight);
+// Helps reduce gaps in rendering to just bridge the gap between components
+// but also borks the images a bit
+// could look into overlapping segments, sounds promising.
+//segHeight++;
 
 let roller = document.createElement("div");
 
