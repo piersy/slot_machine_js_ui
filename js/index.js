@@ -167,7 +167,19 @@ wholeImgViewBox.height += diff;
 // we want to maintain the same aspect ratio between segs and imgSegs.
 // So widen or lessen the image view to accomodate that.
 let aspect = segHeight/rollerWidth;
-wholeImgViewBox.width = aspect * wholeImgViewBox.height;
+// let aspect = segHeight/rollerWidth;
+//let imgSegWidth = wholeImgViewBox.height*aspect/3;
+//let imgSegWidth = 1;
+
+
+// Now we need to re-center the image
+//let diff = wholeImgViewBox.width - imgSegWidth;
+//wholeImgViewBox.left += diff/2;
+//wholeImgViewBox.width = imgSegWidth;
+
+wholeImgViewBox.width = 1;
+wholeImgViewBox.left = 1500;
+
 
 //let imgSegHeight = wholeImgViewBox.height / segsPerImg;
 //let imgSegHeight = wholeImgViewBox.width * aspect;
