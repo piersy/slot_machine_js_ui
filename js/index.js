@@ -113,17 +113,16 @@ let svgs = [
 
 let frontPanel = document.createElement("div");
 let fps = frontPanel.style;
-fps.background = "linear-gradient(black, rgba(0,0,0,0), black)";
+fps.background = "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0),rgba(0,0,0,0.9))";
 fps.position = "absolute";
 fps.border = "1px solid black";
 fps.width = "100%";
-fps.height = "100%";
+fps.height = "85%";
 //fps.zIndex = "10";
-fps.transform = `rotateX(15deg)  translateZ(${(Number(360)/2)+5}px) translateY(25px) `;
+fps.transform = `translateZ(${(Number(360)/2)+1}px) translateY(25px)`;
 //fps.clipPath = 'url(#clipPath1)';
 fps.display = "grid";
-fps.gridTemplateColumns="1fr 4fr 1fr 4fr 1fr 4fr 1fr";
-fps.gridTemplateRows="1fr 3fr 3fr 1fr ";
+fps.gridTemplateColumns="1fr 1fr 1fr";
 
 scene.appendChild(frontPanel);
 
@@ -136,10 +135,10 @@ function addCol(col) {
     grid-column: ${col}`;
   frontPanel.appendChild(d);
 }
-addCol("1");
-addCol("3");
-addCol("5");
-addCol("7");
+// addCol("1");
+// addCol("3");
+// addCol("5");
+// addCol("7");
 
 function addRow(row) {
   let d = document.createElement("div");
@@ -149,8 +148,8 @@ function addRow(row) {
     grid-column: 1/13`;
   frontPanel.appendChild(d);
 }
-addRow("1");
-addRow("4");
+// addRow("1");
+// addRow("4");
 
 
 
