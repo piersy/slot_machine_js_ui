@@ -101,7 +101,7 @@ function shuffle(array) {
 
 
 
-let defaultViewBox = new rol.ViewBox(1750, 525, 2, 2000);
+let defaultViewBox = new rol.ViewBox(1750, 525, 2, 2500);
 let svgs = [
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1452684.svg", defaultViewBox),
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1227462.svg", defaultViewBox),
@@ -113,19 +113,49 @@ let svgs = [
 
 let frontPanel = document.createElement("div");
 let fps = frontPanel.style;
-fps.background = "black";
+fps.background = "rgba(0,0,0,0.25)";
 fps.position = "absolute";
 fps.border = "1px solid black";
-fps.top = "50%";
-fps.left = "50%";
-fps.margin = "-50px";
-fps.width = "400px";
-fps.height = "400px";
+fps.width = "100%";
+fps.height = "100%";
 //fps.zIndex = "10";
-fps.transform = `translateZ(${(Number(360)/2)+5}px)`;
-fps.clipPath = 'url(#clipPath1)';
+fps.transform = `rotateX(15deg)  translateZ(${(Number(360)/2)+5}px) translateY(25px) `;
+//fps.clipPath = 'url(#clipPath1)';
+fps.display = "grid";
+fps.gridTemplateColumns="1fr 4fr 1fr 4fr 1fr 4fr 1fr";
+fps.gridTemplateRows="1fr 3fr 3fr 1fr ";
 
 scene.appendChild(frontPanel);
+
+function addCol(col) {
+  let d = document.createElement("div");
+  d.style = `
+  box-shadow: 10px 5px 5px red;
+    background: black;
+    grid-row: 1/5;
+    grid-column: ${col}`;
+  frontPanel.appendChild(d);
+}
+addCol("1");
+addCol("3");
+addCol("5");
+addCol("7");
+
+function addRow(row) {
+  let d = document.createElement("div");
+  d.style = `
+  box-shadow: 10px 5px 5px red;
+    background: black;
+    grid-row: ${row};
+    grid-column: 1/13`;
+  frontPanel.appendChild(d);
+}
+addRow("1");
+addRow("4");
+
+
+
+
 
 let roller = rol.CreateRoller(280, 360, svgs, 5);
 scene.appendChild(roller);
@@ -149,11 +179,10 @@ style.innerHTML = `@keyframes spin {
 document.getElementsByTagName('head')[0].appendChild(style);
 
 let animating = false;
-/*
 scene.onclick = () => {
   roller.style.animation = animating ? '' : 'spin 4s infinite';
   animating = !animating;
-};*/
+};
 
 
 
