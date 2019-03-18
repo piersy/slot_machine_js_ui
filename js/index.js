@@ -84,8 +84,8 @@ updatePerspectiveOrigin(); //Ensure values initialised
 let roller = document.createElement("div");
 
 // rotate
-let rotateY = addRangeControl("Rotate y", 0, 365, 0);
-let rotateZ = addRangeControl("Rotate z", 0, 365, 0);
+let rotateY = addRangeControl("Rotate y", 0, 360, 0);
+let rotateZ = addRangeControl("Rotate z", 0, 360, 0);
 
 function updateTransform() {
   let y = rotateY.input.value + "deg";
@@ -135,8 +135,9 @@ let angle = (numSegs - 2) * Math.PI / 2 / numSegs;
 
 // The height of each segment. 
 let segHeight = 2 * zTranslate / Math.tan(angle);
-console.log("segHeight", segHeight);
-// Has to be a whole number to have a chance of dividing exactly into the image height.
+//console.log("segHeight", segHeight);
+
+// Helps reduce gaps in rendering to have whole number
 segHeight = Math.round(segHeight);
 
 
@@ -151,7 +152,7 @@ let wholeImgViewBox = {
   height: 2000
 };
 
-// Now adjust image bounds to allow for exact division.
+// Now adjust image bounds to allow for exact division. Is this bollocks?
 
 /*
 let diff = wholeImgViewBox.height % segHeight;
@@ -162,15 +163,22 @@ wholeImgViewBox.height += diff;
 */
 
 
-
-
+ 
 // we want to maintain the same aspect ratio between segs and imgSegs.
 // So widen or lessen the image view to accomodate that.
 let aspect = segHeight/rollerWidth;
+wholeImgViewBox.width = aspect * wholeImgViewBox.height;
 
 //let imgSegHeight = wholeImgViewBox.height / segsPerImg;
-let imgSegHeight = wholeImgViewBox.width * aspect;
-imgSegHeight = Math.round(imgSegHeight);
+//let imgSegHeight = wholeImgViewBox.width * aspect;
+// We need an integer size
+//imgSegHeight = Math.round(imgSegHeight);
+// Now calculate the angle based on the integer size, If we want the segs to
+// join we need to have an integer sized seg which means maybe recalculating the
+// angle?
+//angle = imgSegHeight
+
+let imgSegHeight = wholeImgViewBox.height / segsPerImg;
 
 // @ts-ignore
 roller.style = `
@@ -187,7 +195,7 @@ scene.appendChild(roller);
 for (let i = 0; i < numSegs; i++) {
 
   let seg = document.createElement("img");
-  seg.setAttribute("width", String(rollerWidth));
+  seg.setAttribute("width", String(rollerWidth));  //why does this fix it? because the width was too small and was cramping the image thereby causing less than the requred image amount to be cropped
   seg.setAttribute("height", String(segHeight));
 
   let imgOffset = (i * imgSegHeight) % wholeImgViewBox.height;
@@ -198,7 +206,7 @@ for (let i = 0; i < numSegs; i++) {
     ${wholeImgViewBox.width}, 
     ${imgSegHeight}))`;
 
-  //seg.setAttribute("src", svgView);
+  seg.setAttribute("src", svgView);
 
   // @ts-ignore
   seg.style = `
@@ -217,11 +225,10 @@ for (let i = 0; i < numSegs; i++) {
     top: 50%;
     margin-top: ${-segHeight / 2}px;
 
-    border: 1px solid red;
+   /* border: 1px solid red;*/
 `;
 
-
-  seg.style.transform = `rotateX(-${365 * i / numSegs}deg) translateZ(${zTranslate}px)`;
+  seg.style.transform = `rotateX(-${360 * i / numSegs}deg) translateZ(${zTranslate}px)`;
 
 
   roller.appendChild(seg);
