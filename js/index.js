@@ -15,7 +15,6 @@ scene.style = `
     grid-column: 2`;
 
 // Controls
-
 let controls = document.createElement("div");
 controls.style.border = '1px dotted black';
 controls.style.display = "inline-grid";
@@ -99,13 +98,13 @@ find the angle in between each segment and we know the opposite side which is
 half the roller height so we just need to calculate the adjacent which will be
 equal to half the segment height.
  */
-let rollerWidth = 200;
+let rollerWidth = 250;
 let rollerHeight = 400;
 let numImgs = 5;
 let segsPerImg = 4;
 let numSegs = numImgs * segsPerImg;
 
-let zTranslate = rollerHeight/2;
+let zTranslate = rollerHeight / 2;
 
 // The angle from the edge of a segment to the centre of the roller. Angle
 // inside a regular polygon is (n-2) × PI / n where n is the number of sides. We
@@ -119,7 +118,7 @@ let segHeight = 2 * zTranslate / Math.tan(angle);
 // Helps reduce gaps in rendering to just bridge the gap between components
 // but also borks the images a bit when more segs per image are used.
 // could look into overlapping segments, sounds promising.
-segHeight = Math.trunc(segHeight)+1;
+segHeight = Math.trunc(segHeight) + 1;
 
 let roller = document.createElement("div");
 
@@ -153,54 +152,47 @@ rotateY.input.onchange = rotateY.input.oninput = updateTransform;
 rotateZ.input.onchange = rotateZ.input.oninput = updateTransform;
 updateTransform(); //Ensure value initialised
 
+scene.appendChild(roller);
 
 let imSrc = "https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1089759.svg";
 
-// This veiwbox neatly encompasses the kitty without too much empty space.
+
+/*
+The default approach taken by fragment identifiers to mapping the viewbox to
+the viewport(the img tag) is that the viewbox center will be aligned with the
+viewport center, and it will be scaled maintaining its aspect ratio such that
+it fills the viewport as far as it can without extending any edges past the
+viewport. At that point any edges not at the extent of the viewport will be
+extended to touch the viewport edges. This means if we have defined a square
+viewbox that we put in a rectangular viewport we will see a rectangular
+section of the svg.
+
+The original kitty viewbox is (0,0,3000,3000) with quite a lot of empty space
+around the kitty so we want to cut about 500 off each edge. We also want to
+ensure that each image slice fills the viewport fully vertically, this ensures
+that segments will align. We are not bothered about the horizontal aspect of our
+viewbox as long as it is centered. By setting the width to be very small and
+setting the left offset to the center of the image we ensure that the viewport
+is fully vertically filled and leave it up to the SVG system to extend the
+viewbox to the horizontal segment edges.
+*/
+
+// Original kitty viewbox (0,0,3000,3000)
 let wholeImgViewBox = {
-  top: 500,
-  left: 500,
-  width: 2000,
-  height: 2000
+  height: 2000, // Shave 1000 off total height
+  top: 500,     // Offset vertically so viewbox is centered  
+  width: 2,     // Tiny width, allow svg system to extend as needed
+  left: 1499,   // Center our viewbox horizontally
 };
- 
-// we want to maintain the same aspect ratio between segs and imgSegs.
-// So widen or lessen the image view to accomodate that.
-let aspect = segHeight/rollerWidth;
-// let aspect = segHeight/rollerWidth;
-//let imgSegWidth = wholeImgViewBox.height*aspect/3;
-//let imgSegWidth = 1;
-
-
-// Now we need to re-center the image
-//let diff = wholeImgViewBox.width - imgSegWidth;
-//wholeImgViewBox.left += diff/2;
-//wholeImgViewBox.width = imgSegWidth;
-
-wholeImgViewBox.width = 1;
-wholeImgViewBox.left = 1500;
-
-
-//let imgSegHeight = wholeImgViewBox.height / segsPerImg;
-//let imgSegHeight = wholeImgViewBox.width * aspect;
-// We need an integer size
-//imgSegHeight = Math.round(imgSegHeight);
-// Now calculate the angle based on the integer size, If we want the segs to
-// join we need to have an integer sized seg which means maybe recalculating the
-// angle?
-//angle = imgSegHeight
 
 let imgSegHeight = wholeImgViewBox.height / segsPerImg;
 
 
 
-
-scene.appendChild(roller);
-
 for (let i = 0; i < numSegs; i++) {
 
   let seg = document.createElement("img");
-  seg.setAttribute("width", String(rollerWidth));  //why does this fix it? because the width was too small and was cramping the image thereby causing less than the requred image amount to be cropped
+  seg.setAttribute("width", String(rollerWidth));
   seg.setAttribute("height", String(segHeight));
 
   let imgOffset = (i * imgSegHeight) % wholeImgViewBox.height;
@@ -226,20 +218,19 @@ for (let i = 0; i < numSegs; i++) {
     it half the height of its parent down and then pull it
     up by half of its height
     */
-
     top: 50%;
     margin-top: ${-segHeight / 2}px;
+
    /* border: 1px solid red;*/
 `;
 
   seg.style.transform = `rotateX(-${360 * i / numSegs}deg) translateZ(${zTranslate}px)`;
 
-
   roller.appendChild(seg);
 
 }
-// animate roller
 
+// animate roller
 let style = document.createElement('style');
 style.type = 'text/css';
 style.innerHTML = `@keyframes spin {
