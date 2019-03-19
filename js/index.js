@@ -113,29 +113,96 @@ let svgs = [
 
 let frontPanel = document.createElement("div");
 let fps = frontPanel.style;
-fps.background = "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0),rgba(0,0,0,0.9))";
+//fps.background = "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0),rgba(0,0,0,0.9))";
 fps.position = "absolute";
-fps.border = "1px solid black";
+fps.border = "1px dotted black";
 fps.width = "100%";
-fps.height = "85%";
+fps.height = "100%";
 //fps.zIndex = "10";
-fps.transform = `translateZ(${(Number(360)/2)+1}px) translateY(25px)`;
+//fps.transform = `translateZ(${(Number(360)/2)+1}px) translateY(25px)`;
 //fps.clipPath = 'url(#clipPath1)';
 fps.display = "grid";
+fps.transformStyle = "preserve-3d";
 fps.gridTemplateColumns="1fr 1fr 1fr";
 
 scene.appendChild(frontPanel);
 
+let viewport = document.createElement("div");
+viewport.style = `
+transform-style: preserve-3d;
+background: red;
+grid-column: 1;
+  `;
+frontPanel.appendChild(viewport);
+
+let side = document.createElement("div");
+side.style = `
+  position: absolute;
+  background: grey;
+  left: 0px;
+  right: 0px;
+  top: 0px:
+  bottom: 0px;
+  height: 100%;
+  transform-origin: 50% 50%;
+  transform: rotateY(75deg) translateZ(-80px) translateX(-120px) ;
+  `;
+viewport.appendChild(side);
+
+side = document.createElement("div");
+side.style = `
+  position: absolute;
+  background: grey;
+  left: 0px;
+  right: 0px;
+  top: 0px:
+  bottom: 0px;
+  height: 100%;
+  transform-origin: 50% 50%;
+  transform: rotateY(105deg) translateZ(80px) translateX(-120px);
+  `;
+viewport.appendChild(side);
+
+
+let top = document.createElement("div");
+top.style = `
+  position: absolute;
+  background: dimgrey;
+  left: 0px;
+  right: 0px;
+  top: 0px:
+  bottom: 0px;
+  height: 100%;
+  transform-origin: 50% 50%;
+  transform: rotateX(80deg) translateZ(-150px) translateY(100px);
+  `;
+viewport.appendChild(top);
+
+let bottom = document.createElement("div");
+bottom.style = `
+  position: absolute;
+  background: dimgrey;
+  left: 0px;
+  right: 0px;
+  top: 0px:
+  bottom: 0px;
+  height: 100%;
+  transform-origin: 50% 50%;
+  transform: rotateX(100deg) translateZ(150px) translateY(100px);
+  `;
+viewport.appendChild(bottom);
+
+
+
+
 function addCol(col) {
   let d = document.createElement("div");
   d.style = `
-  box-shadow: 10px 5px 5px red;
     background: black;
-    grid-row: 1/5;
     grid-column: ${col}`;
   frontPanel.appendChild(d);
 }
-// addCol("1");
+//addCol("1");
 // addCol("3");
 // addCol("5");
 // addCol("7");
@@ -155,12 +222,12 @@ function addRow(row) {
 
 
 
-let roller = rol.CreateRoller(280, 360, svgs, 5);
-scene.appendChild(roller);
+let roller1 = rol.CreateRoller(280, 360, svgs, 5);
+scene.appendChild(roller1);
 
 
 svgs = shuffle(svgs);
-roller = rol.CreateRoller(280, 360, svgs, 5);
+let roller = rol.CreateRoller(280, 360, svgs, 5);
 scene.appendChild(roller);
 
 svgs = shuffle(svgs);
@@ -178,7 +245,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 
 let animating = false;
 scene.onclick = () => {
-  roller.style.animation = animating ? '' : 'spin 4s infinite';
+  roller1.style.animation = animating ? '' : 'spin 4s infinite';
   animating = !animating;
 };
 
@@ -187,11 +254,11 @@ scene.onclick = () => {
 // rotate
 let rotateY = addRangeControl("Rotate y", 0, 360, 0);
 let rotateZ = addRangeControl("Rotate z", 0, 360, 0);
-/*
+
 function updateTransform() {
   let y = rotateY.input.value + "deg";
   let z = rotateZ.input.value + "deg";
-  roller.style.transform = `
+  scene.style.transform = `
   rotateY(${y})
   rotateZ(${z})`;
   rotateY.display.innerHTML = y;
@@ -201,6 +268,6 @@ function updateTransform() {
 rotateY.input.onchange = rotateY.input.oninput = updateTransform;
 rotateZ.input.onchange = rotateZ.input.oninput = updateTransform;
 updateTransform(); //Ensure value initialised
-*/
+
 document.body.appendChild(scene);
 document.body.appendChild(controls);

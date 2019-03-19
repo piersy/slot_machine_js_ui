@@ -12,5 +12,6 @@ body {
     grid-template-columns: 1fr 1fr 1fr;
     position: relative;
     transform-style: preserve-3d;
+    transform: rotateY(20deg) rotateX(20deg);
 
 }
