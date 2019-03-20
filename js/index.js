@@ -223,18 +223,22 @@ function addRow(row) {
 
 // @ts-ignore
 const maxSceneWidth = 1000;
+const minSceneWidth = 300;
+
 let sceneWidth = 0.8 * window.innerWidth;
 sceneWidth = sceneWidth < maxSceneWidth ? sceneWidth : maxSceneWidth;
+sceneWidth = sceneWidth > minSceneWidth ? sceneWidth : minSceneWidth;
+
+
 
 scene.style.width = `${sceneWidth}px`;
-//window.innerWidth;
-//window.innerHeight;
-let rollerAspectRatio = 0.8;
+let rollerAspectRatio = 1;
 let rollerWidth = sceneWidth/3;
 let rollerHeight = rollerWidth/rollerAspectRatio;
 
 scene.style.height = `${rollerHeight}px`;
 scene.style.margin = `${rollerHeight/10}px auto`;
+
 
 
 let roller1 = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
@@ -248,6 +252,7 @@ scene.appendChild(roller);
 svgs = shuffle(svgs);
 roller = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
 scene.appendChild(roller);
+
 
 // animate roller
 let style = document.createElement('style');
@@ -268,20 +273,25 @@ scene.onclick = () => {
 
 
 // rotate
-let rotateY = addRangeControl("Rotate y", 0, rollerHeight, 0);
-let rotateZ = addRangeControl("Rotate z", 0, rollerHeight, 0);
+let rotateX = addRangeControl("Rotate x", -360, 360, 0);
+let rotateY = addRangeControl("Rotate y", -360, 360, 0);
+let rotateZ = addRangeControl("Rotate z", -360, 360, 0);
 
 function updateTransform() {
+  let x = rotateX.input.value + "deg";
   let y = rotateY.input.value + "deg";
   let z = rotateZ.input.value + "deg";
   // @ts-ignore
   scene.style.transform = `
+  rotateX(${x})
   rotateY(${y})
   rotateZ(${z})`;
+  rotateX.display.innerHTML = x;
   rotateY.display.innerHTML = y;
   rotateZ.display.innerHTML = z;
 }
 
+rotateX.input.onchange = rotateX.input.oninput = updateTransform;
 rotateY.input.onchange = rotateY.input.oninput = updateTransform;
 rotateZ.input.onchange = rotateZ.input.oninput = updateTransform;
 updateTransform(); //Ensure value initialised
