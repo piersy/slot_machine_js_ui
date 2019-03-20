@@ -5,7 +5,7 @@
 import * as rol from './roller.js';
 
 // Scene
-let scene = document.querySelector(".scene");
+let scene = document.getElementById("scene");
 
 
 // Controls
@@ -14,7 +14,6 @@ controls.style.border = '1px dotted black';
 controls.style.display = "inline-grid";
 controls.style.gridTemplateColumns = "auto auto auto";
 controls.style.gridGap = "10px";
-controls.style.gridColumn = "7";
 
 // Adds a range input and disply to controls and returns a range input and a div
 // to display the value.
@@ -110,16 +109,16 @@ let svgs = [
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1467855.svg", defaultViewBox),
 ];
 
-
+/*
 let frontPanel = document.createElement("div");
 let fps = frontPanel.style;
 //fps.background = "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0),rgba(0,0,0,0.9))";
 fps.position = "absolute";
 fps.border = "1px dotted black";
-fps.width = "100%";
+fps.rollerWidth = "100%";
 fps.height = "100%";
 //fps.zIndex = "10";
-//fps.transform = `translateZ(${(Number(360)/2)+1}px) translateY(25px)`;
+//fps.transform = `translateZ(${(Number(rollerHeight)/2)+1}px) translateY(25px)`;
 //fps.clipPath = 'url(#clipPath1)';
 fps.display = "grid";
 fps.transformStyle = "preserve-3d";
@@ -215,23 +214,39 @@ function addRow(row) {
     grid-column: 1/13`;
   frontPanel.appendChild(d);
 }
+
+
 // addRow("1");
 // addRow("4");
 
+*/
+
+// @ts-ignore
+const maxSceneWidth = 1000;
+let sceneWidth = 0.8 * window.innerWidth;
+sceneWidth = sceneWidth < maxSceneWidth ? sceneWidth : maxSceneWidth;
+
+scene.style.width = `${sceneWidth}px`;
+//window.innerWidth;
+//window.innerHeight;
+let rollerAspectRatio = 0.8;
+let rollerWidth = sceneWidth/3;
+let rollerHeight = rollerWidth/rollerAspectRatio;
+
+scene.style.height = `${rollerHeight}px`;
+scene.style.margin = `${rollerHeight/10}px auto`;
 
 
-
-
-let roller1 = rol.CreateRoller(280, 360, svgs, 5);
+let roller1 = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
 scene.appendChild(roller1);
 
 
 svgs = shuffle(svgs);
-let roller = rol.CreateRoller(280, 360, svgs, 5);
+let roller = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
 scene.appendChild(roller);
 
 svgs = shuffle(svgs);
-roller = rol.CreateRoller(280, 360, svgs, 5);
+roller = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
 scene.appendChild(roller);
 
 // animate roller
@@ -244,6 +259,7 @@ style.innerHTML = `@keyframes spin {
 document.getElementsByTagName('head')[0].appendChild(style);
 
 let animating = false;
+// @ts-ignore
 scene.onclick = () => {
   roller1.style.animation = animating ? '' : 'spin 4s infinite';
   animating = !animating;
@@ -252,12 +268,13 @@ scene.onclick = () => {
 
 
 // rotate
-let rotateY = addRangeControl("Rotate y", 0, 360, 0);
-let rotateZ = addRangeControl("Rotate z", 0, 360, 0);
+let rotateY = addRangeControl("Rotate y", 0, rollerHeight, 0);
+let rotateZ = addRangeControl("Rotate z", 0, rollerHeight, 0);
 
 function updateTransform() {
   let y = rotateY.input.value + "deg";
   let z = rotateZ.input.value + "deg";
+  // @ts-ignore
   scene.style.transform = `
   rotateY(${y})
   rotateZ(${z})`;
