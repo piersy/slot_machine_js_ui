@@ -1,8 +1,10 @@
 body {
- display: grid;
- grid-template-columns: 1fr;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
-
 
 .scene {
     border: 1px solid black;
