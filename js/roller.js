@@ -52,12 +52,13 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     // Add the viewing hole for the roller Use the xhtml namespace for create
     // element so that we get an html element that has a style property.
 
+    let strutWidth = width/20;
     //Front strut left
     let d = document.createElement("div");
     d.style = `
         position: absolute;
-        width: ${(width/20)+2}px;
-        height: ${height}px;
+        width: calc(${strutWidth}vw + 2px);
+        height: ${height}vw;
         background: grey;
         transform: translateX(-1px)`;
     roller.appendChild(d);
@@ -67,20 +68,20 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     d.style = `
         position: absolute;
         transform-origin: 0% 50%;
-        width: ${width}px;
-        height: ${height}px;
+        width: ${width}vw;
+        height: ${height}vw;
         background: rgb(140,140,140);
-        transform: translateX(${width/20}px)  rotateY(80deg)`;
+        transform: translateX(${strutWidth}vw)  rotateY(80deg)`;
     roller.appendChild(d);
 
     //Front strut right
     d = document.createElement("div");
     d.style = `
         position: absolute;
-        width: ${(width/20)+2}px;
-        height: ${height}px;
+        width: calc(${strutWidth}vw + 2px);
+        height: ${height}vw;
         background: grey;
-        transform: translateX(${width - ((width/20)+1)}px)`;
+        transform: translateX(calc(${width - strutWidth}vw - 1px))`;
     roller.appendChild(d);
 
     // right side
@@ -88,10 +89,10 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     d.style = `
         position: absolute;
         transform-origin: 100% 50%;
-        width: ${width}px;
-        height: ${height}px;
+        width: ${width}vw;
+        height: ${height}vw;
         background: rgb(120,120,120);
-        transform: translateX(${-width/20}px)  rotateY(-80deg)`;
+        transform: translateX(${-strutWidth}vw)  rotateY(-80deg)`;
     roller.appendChild(d);
 
     //top edge
@@ -99,8 +100,8 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     d.style = `
         position: absolute;
         transform-origin: 50% 100%;
-        width: ${width + 2}px;
-        height: ${(width/20)+1}px;
+        width: calc(${width}vw + 2px);
+        height: calc(${strutWidth}vw + 1px);
         background: grey;
         transform: translateX(-1px)`;
     roller.appendChild(d);
@@ -110,20 +111,20 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     d.style = `
         position: absolute;
         transform-origin: 50% 0%;
-        width: ${width}px;
-        height: ${height}px;
+        width: ${width}vw;
+        height: ${height}vw;
         background: rgb(100,100,100);
-        transform: translateY(${(width/20)}px)  rotateX(-80deg)`;
+        transform: translateY(${strutWidth}vw)  rotateX(-80deg)`;
     roller.appendChild(d);
 
     //bottom edge
     d = document.createElement("div");
     d.style = `
         position: absolute;
-        width: ${width + 2}px;
-        height: ${(width/20)+1}px;
+        width: calc(${width}vw + 2px);
+        height: calc(${strutWidth}vw + 1px);
         background: grey;
-        transform: translateX(-1px) translateY(${height-(width/20)-1}px)`;
+        transform: translateX(-1px) translateY(calc(${height-strutWidth}vw - 1px))`;
     roller.appendChild(d);
 
 
@@ -132,10 +133,10 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     d.style = `
         position: absolute;
         transform-origin: 50% 100%;
-        width: ${width}px;
-        height: ${height}px;
+        width: ${width}vw;
+        height: ${height}vw;
         background: rgb(80,80,80);
-        transform: translateY(-${(width/20)}px)  rotateX(80deg)`;
+        transform: translateY(-${strutWidth}vw)  rotateX(80deg)`;
     roller.appendChild(d);
 
 
@@ -152,27 +153,14 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     // Find seg height, it will be twice the adjacent side of the triangle with
     // opposite side of length zTranslate and angle betweenSides/2;
     let segHeight = 2 * zTranslate / Math.tan(betweenSides / 2);
-
-    // Helps reduce gaps in rendering to just bridge the gap between components
-    // but also borks the images a bit when more segs per image are used.
-    // could look into overlapping segments, sounds promising.
-    segHeight = Math.trunc(segHeight) + 1;
-
+    
     // @ts-ignore
     roller.style = `
-    width: ${width}px;
-    height: ${height}px;
+    width: ${width}vw;
+    height: ${height}vw;
     position: relative;
     transform-origin: 50% 50%;
-    transform-style: preserve-3d;
-    
-    /**
-     *  margin auto only works for horizontal alignment,
-     * for vertical align we need to use top
-     * and negative margin
-     */
-    top: 50%;
-    margin:${-height / 2}px auto;`;  // Should we even be doing this here, maybe not?
+    transform-style: preserve-3d;`;
 
     /*
     The default approach taken by fragment identifiers to mapping the viewbox to
@@ -201,8 +189,8 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         for (let j = 0; j < segsPerImage; j++) {
 
             let seg = document.createElement("img");
-            seg.setAttribute("width", String(width));
-            seg.setAttribute("height", String(segHeight));
+          //  seg.setAttribute("width", String(width));
+           // seg.setAttribute("height", String(segHeight));
 
             let imgOffset = j * imgSegHeight;
 
@@ -217,9 +205,10 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
             // @ts-ignore
             seg.style = `
                 position: absolute;
-/*                 background: grey;
- */                background-image: linear-gradient(rgb(247, 191, 29), rgb(247, 217, 21));
+                background-image: linear-gradient(rgb(247, 191, 29), rgb(247, 217, 21));
 
+                width: ${width}vw;
+                height: calc(${segHeight}vw + 1px); /* The added pixel closes the gaps in rendering */
 
                 /* ensure transforms happen around the center of the segment */
                 transform-origin: 50% 50%;
@@ -230,11 +219,11 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
                 up by half of its height
                 */
                 top: 50%;
-                margin-top: ${-segHeight / 2}px;
+                margin-top: ${-segHeight / 2}vw;
 
                 /* border: 1px solid red;*/`;
 
-            seg.style.transform = `translateZ(${-pushback}px)  rotateX(-${360 * (i * segsPerImage + j) / numSegs}deg) translateZ(${zTranslate}px)`;
+            seg.style.transform = `translateZ(${-pushback}vw)  rotateX(-${360 * (i * segsPerImage + j) / numSegs}deg) translateZ(${zTranslate}vw)`;
 
             roller.appendChild(seg);
         }

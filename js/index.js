@@ -229,15 +229,18 @@ let sceneWidth = 0.8 * window.innerWidth;
 sceneWidth = sceneWidth < maxSceneWidth ? sceneWidth : maxSceneWidth;
 sceneWidth = sceneWidth > minSceneWidth ? sceneWidth : minSceneWidth;
 
+// Convert to vw
+sceneWidth = 100 * sceneWidth/window.innerWidth;
 
 
-scene.style.width = `${sceneWidth}px`;
+
+scene.style.width = `${sceneWidth}vw`;
 let rollerAspectRatio = 1;
 let rollerWidth = sceneWidth/3;
 let rollerHeight = rollerWidth/rollerAspectRatio;
 
-scene.style.height = `${rollerHeight}px`;
-scene.style.margin = `${rollerHeight/10}px auto`;
+scene.style.height = `${rollerHeight}vw`;
+scene.style.margin = `${rollerHeight/10}vw auto`;
 
 
 
