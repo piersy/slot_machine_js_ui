@@ -4,12 +4,36 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
 }
 
 .scene {
-    border: 1px solid black;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    position: relative;
+    text-align: left;
+    /* display: grid;
+    grid-template-columns: 1fr 1fr 1fr; */
     transform-style: preserve-3d;
+}
+/*
+svg {
+    position: relative;
+    left: 5vw;
+    width: 5vw;
+    height: 5vw;
+}
+
+
+#verticalAlign {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 500;
+    font-family: Palm;
+    background: red;
+    background: grey;
+    padding-top: 5vw;
+}
+*/
+
+@font-face {
+    font-family: "Palm";
+    src: url("../assets/PalmCanyonDrive-Trial.otf");
 }

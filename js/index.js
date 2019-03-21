@@ -97,9 +97,6 @@ function shuffle(array) {
   return array;
 }
 
-
-
-
 let defaultViewBox = new rol.ViewBox(1750, 525, 2, 2500);
 let svgs = [
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1452684.svg", defaultViewBox),
@@ -109,117 +106,6 @@ let svgs = [
   new rol.SVG("https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1467855.svg", defaultViewBox),
 ];
 
-/*
-let frontPanel = document.createElement("div");
-let fps = frontPanel.style;
-//fps.background = "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0),rgba(0,0,0,0.9))";
-fps.position = "absolute";
-fps.border = "1px dotted black";
-fps.rollerWidth = "100%";
-fps.height = "100%";
-//fps.zIndex = "10";
-//fps.transform = `translateZ(${(Number(rollerHeight)/2)+1}px) translateY(25px)`;
-//fps.clipPath = 'url(#clipPath1)';
-fps.display = "grid";
-fps.transformStyle = "preserve-3d";
-fps.gridTemplateColumns="1fr 1fr 1fr";
-
-scene.appendChild(frontPanel);
-
-let viewport = document.createElement("div");
-viewport.style = `
-transform-style: preserve-3d;
-background: red;
-grid-column: 1;
-  `;
-frontPanel.appendChild(viewport);
-
-let side = document.createElement("div");
-side.style = `
-  position: absolute;
-  background: grey;
-  left: 0px;
-  right: 0px;
-  top: 0px:
-  bottom: 0px;
-  height: 100%;
-  transform-origin: 50% 50%;
-  transform: rotateY(75deg) translateZ(-80px) translateX(-120px) ;
-  `;
-viewport.appendChild(side);
-
-side = document.createElement("div");
-side.style = `
-  position: absolute;
-  background: grey;
-  left: 0px;
-  right: 0px;
-  top: 0px:
-  bottom: 0px;
-  height: 100%;
-  transform-origin: 50% 50%;
-  transform: rotateY(105deg) translateZ(80px) translateX(-120px);
-  `;
-viewport.appendChild(side);
-
-
-let top = document.createElement("div");
-top.style = `
-  position: absolute;
-  background: dimgrey;
-  left: 0px;
-  right: 0px;
-  top: 0px:
-  bottom: 0px;
-  height: 100%;
-  transform-origin: 50% 50%;
-  transform: rotateX(80deg) translateZ(-150px) translateY(100px);
-  `;
-viewport.appendChild(top);
-
-let bottom = document.createElement("div");
-bottom.style = `
-  position: absolute;
-  background: dimgrey;
-  left: 0px;
-  right: 0px;
-  top: 0px:
-  bottom: 0px;
-  height: 100%;
-  transform-origin: 50% 50%;
-  transform: rotateX(100deg) translateZ(150px) translateY(100px);
-  `;
-viewport.appendChild(bottom);
-
-
-
-
-function addCol(col) {
-  let d = document.createElement("div");
-  d.style = `
-    background: black;
-    grid-column: ${col}`;
-  frontPanel.appendChild(d);
-}
-//addCol("1");
-// addCol("3");
-// addCol("5");
-// addCol("7");
-
-function addRow(row) {
-  let d = document.createElement("div");
-  d.style = `
-    background: black;
-    grid-row: ${row};
-    grid-column: 1/13`;
-  frontPanel.appendChild(d);
-}
-
-
-// addRow("1");
-// addRow("4");
-
-*/
 
 // @ts-ignore
 const maxSceneWidth = 1000;
@@ -232,15 +118,54 @@ sceneWidth = sceneWidth > minSceneWidth ? sceneWidth : minSceneWidth;
 // Convert to vw
 sceneWidth = 100 * sceneWidth / window.innerWidth;
 
-
-
 scene.style.width = `${sceneWidth}vw`;
 let rollerAspectRatio = 1;
 let rollerWidth = sceneWidth / 3;
 let rollerHeight = rollerWidth / rollerAspectRatio;
 
-scene.style.height = `${rollerHeight}vw`;
+// We want to allow space for a sign atop of the rollers
+scene.style.height = `${rollerHeight * 2}vw`;
 scene.style.margin = `${rollerHeight / 10}vw auto`;
+
+// Add sign
+let signHeight = rollerHeight / 2.5;
+let sign = document.createElement("div");
+sign.style = `
+display: flex;
+flex-direction: column;
+align-items: center;`;
+scene.appendChild(sign);
+
+let upperSign = document.createElement("div");
+upperSign.style = `
+width: ${sceneWidth / 4}vw;
+height: ${signHeight / 2}vw;
+border-top-left-radius: ${signHeight / 2}vw;
+border-top-right-radius: ${signHeight / 2}vw;
+background: grey;
+text-align: center;
+font-size: 2rem;
+font-weight: 500;
+font-family: Palm;
+line-height: ${signHeight/2}vw;`;  // The line height being the same height as the div centers the text vertically
+upperSign.innerHTML = "Kitty Slots";
+sign.appendChild(upperSign);
+
+let lowerSign = document.createElement("div");
+lowerSign.style = `
+width: ${sceneWidth}vw;
+height: ${signHeight / 2}vw;
+border-top-left-radius: ${signHeight / 2}vw;
+border-top-right-radius: ${signHeight / 2}vw;
+background: grey;`;
+sign.appendChild(lowerSign);
+
+// Roller container
+let rollerContainer = document.createElement("div");
+rollerContainer.style = `
+width: ${sceneWidth}vw;
+height: ${rollerHeight}vw;`;
+scene.appendChild(rollerContainer);
 
 let rollers = [];
 let viewHoles = [];
@@ -265,7 +190,7 @@ for (let i = 0; i < viewHoles.length; i++) {
   v.style.left = `${i * rollerWidth}vw`;
   // Make sure this doesn't catch clicks so we can click the roller
   v.style.pointerEvents = "none";
-  scene.appendChild(v);
+  rollerContainer.appendChild(v);
 }
 
 // Amount by which we push the roller back to sit in the viewHole.
@@ -291,15 +216,10 @@ for (let i = 0; i < rollers.length; i++) {
 
   // Add toggleable rotation to the rollers
   r.onclick = () => {
-    console.log("wooo");
     r.style.animation = r.style.animation == '' ? 'spin 4s 1' : '';
   };
-  scene.appendChild(r);
+  rollerContainer.appendChild(r);
 }
-
-
-
-
 
 
 // rotate
@@ -326,5 +246,4 @@ rotateY.input.onchange = rotateY.input.oninput = updateTransform;
 rotateZ.input.onchange = rotateZ.input.oninput = updateTransform;
 updateTransform(); //Ensure value initialised
 
-document.body.appendChild(scene);
 document.body.appendChild(controls);
