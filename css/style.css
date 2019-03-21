@@ -8,9 +8,6 @@ body {
 }
 
 .scene {
-    text-align: left;
-    /* display: grid;
-    grid-template-columns: 1fr 1fr 1fr; */
     transform-style: preserve-3d;
 }
 /*

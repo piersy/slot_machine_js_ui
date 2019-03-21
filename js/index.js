@@ -120,12 +120,21 @@ sceneWidth = 100 * sceneWidth / window.innerWidth;
 
 scene.style.width = `${sceneWidth}vw`;
 let rollerAspectRatio = 1;
-let rollerWidth = sceneWidth / 3;
+let rollerWidth = sceneWidth / 4; // scene is 3 rollers + a lever
+let leverWidth = rollerWidth*0.6;
+let rollersWidth = rollerWidth * 3;
 let rollerHeight = rollerWidth / rollerAspectRatio;
 
 // We want to allow space for a sign atop of the rollers
 scene.style.height = `${rollerHeight * 2}vw`;
 scene.style.margin = `${rollerHeight / 10}vw auto`;
+
+// box container, everything except the lever
+let boxContainer = document.createElement("div");
+boxContainer.style = `
+width: ${rollersWidth}vw;
+height: ${rollerHeight*2}vw;`;
+scene.appendChild(boxContainer);
 
 // Add sign
 let signHeight = rollerHeight / 2.5;
@@ -134,17 +143,18 @@ sign.style = `
 display: flex;
 flex-direction: column;
 align-items: center;`;
-scene.appendChild(sign);
+boxContainer.appendChild(sign);
+
 
 let upperSign = document.createElement("div");
 upperSign.style = `
-width: ${sceneWidth / 4}vw;
+width: ${rollersWidth / 4}vw;
 height: ${signHeight / 2}vw;
 border-top-left-radius: ${signHeight / 2}vw;
 border-top-right-radius: ${signHeight / 2}vw;
 background: grey;
 text-align: center;
-font-size: 2rem;
+font-size: 3vw;
 font-weight: 500;
 font-family: Palm;
 line-height: ${signHeight/2}vw;`;  // The line height being the same height as the div centers the text vertically
@@ -153,19 +163,12 @@ sign.appendChild(upperSign);
 
 let lowerSign = document.createElement("div");
 lowerSign.style = `
-width: ${sceneWidth}vw;
+width: ${rollersWidth}vw;
 height: ${signHeight / 2}vw;
 border-top-left-radius: ${signHeight / 2}vw;
 border-top-right-radius: ${signHeight / 2}vw;
 background: grey;`;
 sign.appendChild(lowerSign);
-
-// Roller container
-let rollerContainer = document.createElement("div");
-rollerContainer.style = `
-width: ${sceneWidth}vw;
-height: ${rollerHeight}vw;`;
-scene.appendChild(rollerContainer);
 
 let rollers = [];
 let viewHoles = [];
@@ -190,7 +193,7 @@ for (let i = 0; i < viewHoles.length; i++) {
   v.style.left = `${i * rollerWidth}vw`;
   // Make sure this doesn't catch clicks so we can click the roller
   v.style.pointerEvents = "none";
-  rollerContainer.appendChild(v);
+  boxContainer.appendChild(v);
 }
 
 // Amount by which we push the roller back to sit in the viewHole.
@@ -218,9 +221,22 @@ for (let i = 0; i < rollers.length; i++) {
   r.onclick = () => {
     r.style.animation = r.style.animation == '' ? 'spin 4s 1' : '';
   };
-  rollerContainer.appendChild(r);
+  boxContainer.appendChild(r);
 }
 
+// Add lever
+let lever = document.createElement("div");
+lever.style = `
+position: absolute;
+width: ${leverWidth/2}vw;
+height: ${leverWidth}vw;
+background: red;
+left: ${rollerWidth*3}vw;
+top: ${signHeight + rollerHeight/2 - leverWidth/2}vw;
+border-top-right-radius: ${leverWidth}vw;
+border-bottom-right-radius: ${leverWidth}vw;
+transform: translateZ(${-pushback}vw)`;
+scene.appendChild(lever);
 
 // rotate
 let rotateX = addRangeControl("Rotate x", -360, 360, 0);
