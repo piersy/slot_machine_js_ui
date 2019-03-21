@@ -230,48 +230,75 @@ sceneWidth = sceneWidth < maxSceneWidth ? sceneWidth : maxSceneWidth;
 sceneWidth = sceneWidth > minSceneWidth ? sceneWidth : minSceneWidth;
 
 // Convert to vw
-sceneWidth = 100 * sceneWidth/window.innerWidth;
+sceneWidth = 100 * sceneWidth / window.innerWidth;
 
 
 
 scene.style.width = `${sceneWidth}vw`;
 let rollerAspectRatio = 1;
-let rollerWidth = sceneWidth/3;
-let rollerHeight = rollerWidth/rollerAspectRatio;
+let rollerWidth = sceneWidth / 3;
+let rollerHeight = rollerWidth / rollerAspectRatio;
 
 scene.style.height = `${rollerHeight}vw`;
-scene.style.margin = `${rollerHeight/10}vw auto`;
+scene.style.margin = `${rollerHeight / 10}vw auto`;
 
-
-
-let roller1 = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
-scene.appendChild(roller1);
+let rollers = [];
+let viewHoles = [];
+let r = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
+rollers.push(r[0]);
+viewHoles.push(r[1]);
 
 
 svgs = shuffle(svgs);
-let roller = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
-scene.appendChild(roller);
+r = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
+rollers.push(r[0]);
+viewHoles.push(r[1]);
 
 svgs = shuffle(svgs);
-roller = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
-scene.appendChild(roller);
+r = rol.CreateRoller(rollerWidth, rollerHeight, svgs, 5);
+rollers.push(r[0]);
+viewHoles.push(r[1]);
 
+for (let i = 0; i < viewHoles.length; i++) {
+  const v = viewHoles[i];
+  // Position because rollers are absolute;
+  v.style.left = `${i * rollerWidth}vw`;
+  // Make sure this doesn't catch clicks so we can click the roller
+  v.style.pointerEvents = "none";
+  scene.appendChild(v);
+}
 
-// animate roller
+// Amount by which we push the roller back to sit in the viewHole.
+let pushback = rollerHeight * 0.8;
+
+// Roller animation
 let style = document.createElement('style');
 style.type = 'text/css';
 style.innerHTML = `@keyframes spin {
-  0% { transform: rotateX(0deg); }
-100% { transform: rotateX(720deg); }
+  0% { transform: translateZ(${-pushback}vw) rotateX(0deg); }
+100% { transform: translateZ(${-pushback}vw) rotateX(720deg); }
 }`;
 document.getElementsByTagName('head')[0].appendChild(style);
 
-let animating = false;
-// @ts-ignore
-scene.onclick = () => {
-  roller1.style.animation = animating ? '' : 'spin 4s infinite';
-  animating = !animating;
-};
+
+for (let i = 0; i < rollers.length; i++) {
+  const r = rollers[i];
+  // Position because rollers are absolute;
+  r.style.left = `${i * rollerWidth}vw`;
+  r.style.transform = `translateZ(${-pushback}vw)`;
+
+
+
+  // Add toggleable rotation to the rollers
+  r.onclick = () => {
+    console.log("wooo");
+    r.style.animation = r.style.animation == '' ? 'spin 4s 1' : '';
+  };
+  scene.appendChild(r);
+}
+
+
+
 
 
 

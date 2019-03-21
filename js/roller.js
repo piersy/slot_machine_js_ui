@@ -30,7 +30,9 @@ export class SVG {
  * CreateRoller creates an element that contains a 3d roller of the desired
  * height and width with the provided svgs stacked on top of each other and
  * wrapped around the roller. For each image provided there will be segsPerImage
- * segments.
+ * segments. It also creates a "viewing hole" the likes of which you see on a
+ * slot machine. This allows us to rotate the roller separately from the
+ * "viewing hole";
  *
  * The roller is formed from a collection of segments, each segment is rotated
  * around the X axis by an amount inversely proportional to the total number of
@@ -41,13 +43,22 @@ export class SVG {
  * 
  * @param {Number} width
  * @param {Number} height
- * @param {Array}  svgs - an array of @link{SVG} objects.
+ * @param {SVG[]}  svgs - an array of @link{SVG} objects.
  * @param {Number} segsPerImage
- * @returns {HTMLElement}
+ * @returns {HTMLElement[]} - the first element will be the roller and the
+ * second the "viewing hole"; 
  */
 export function CreateRoller(width, height, svgs, segsPerImage) {
 
-    let roller = document.createElement("div");
+    let viewHole = document.createElement("div");
+
+    // @ts-ignore
+    viewHole.style = `
+    width: ${width}vw;
+    height: ${height}vw;
+    position: absolute;
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;`;
 
     // Add the viewing hole for the roller Use the xhtml namespace for create
     // element so that we get an html element that has a style property.
@@ -61,7 +72,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: ${height}vw;
         background: grey;
         transform: translateX(-1px)`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
     // left side
     d = document.createElement("div");
@@ -72,7 +83,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: ${height}vw;
         background: rgb(140,140,140);
         transform: translateX(${strutWidth}vw)  rotateY(80deg)`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
     //Front strut right
     d = document.createElement("div");
@@ -82,7 +93,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: ${height}vw;
         background: grey;
         transform: translateX(calc(${width - strutWidth}vw - 1px))`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
     // right side
     d = document.createElement("div");
@@ -93,7 +104,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: ${height}vw;
         background: rgb(120,120,120);
         transform: translateX(${-strutWidth}vw)  rotateY(-80deg)`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
     //top edge
     d = document.createElement("div");
@@ -104,7 +115,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: calc(${strutWidth}vw + 1px);
         background: grey;
         transform: translateX(-1px)`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
     // top side
     d = document.createElement("div");
@@ -115,7 +126,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: ${height}vw;
         background: rgb(100,100,100);
         transform: translateY(${strutWidth}vw)  rotateX(-80deg)`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
     //bottom edge
     d = document.createElement("div");
@@ -125,7 +136,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: calc(${strutWidth}vw + 1px);
         background: grey;
         transform: translateX(-1px) translateY(calc(${height-strutWidth}vw - 1px))`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
 
     // bottom side
@@ -137,11 +148,10 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         height: ${height}vw;
         background: rgb(80,80,80);
         transform: translateY(-${strutWidth}vw)  rotateX(80deg)`;
-    roller.appendChild(d);
+    viewHole.appendChild(d);
 
 
     // How far back we push the roller so that it sits well in the viewport
-    let pushback = height * 0.8;
     let numSegs = svgs.length * segsPerImage;
     let zTranslate = height/2.1;
 
@@ -154,11 +164,13 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     // opposite side of length zTranslate and angle betweenSides/2;
     let segHeight = 2 * zTranslate / Math.tan(betweenSides / 2);
     
+    let roller = document.createElement("div");
+
     // @ts-ignore
     roller.style = `
     width: ${width}vw;
     height: ${height}vw;
-    position: relative;
+    position: absolute;
     transform-origin: 50% 50%;
     transform-style: preserve-3d;`;
 
@@ -223,12 +235,12 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
 
                 /* border: 1px solid red;*/`;
 
-            seg.style.transform = `translateZ(${-pushback}vw)  rotateX(-${360 * (i * segsPerImage + j) / numSegs}deg) translateZ(${zTranslate}vw)`;
+            seg.style.transform = `rotateX(-${360 * (i * segsPerImage + j) / numSegs}deg) translateZ(${zTranslate}vw)`;
 
             roller.appendChild(seg);
         }
 
     }
 
-    return roller;
+    return [roller, viewHole];
 }
