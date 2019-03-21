@@ -140,9 +140,9 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
 
 
     // How far back we push the roller so that it sits well in the viewport
-    let pushback = height * 0.9;
+    let pushback = height * 0.8;
     let numSegs = svgs.length * segsPerImage;
-    let zTranslate = height/2;
+    let zTranslate = height/2.1;
 
     // Find the angle between adjacent segments.
     // Angle inside a regular polygon is (n-2) × PI / n where n is the number of
