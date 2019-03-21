@@ -47,6 +47,100 @@ export class SVG {
  */
 export function CreateRoller(width, height, svgs, segsPerImage) {
 
+    let roller = document.createElement("div");
+
+    // Add the viewing hole for the roller Use the xhtml namespace for create
+    // element so that we get an html element that has a style property.
+
+    //Front strut left
+    let d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        width: ${(width/20)+2}px;
+        height: ${height}px;
+        background: grey;
+        transform: translateX(-1px)`;
+    roller.appendChild(d);
+
+    // left side
+    d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        transform-origin: 0% 50%;
+        width: ${width}px;
+        height: ${height}px;
+        background: rgb(140,140,140);
+        transform: translateX(${width/20}px)  rotateY(80deg)`;
+    roller.appendChild(d);
+
+    //Front strut right
+    d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        width: ${(width/20)+2}px;
+        height: ${height}px;
+        background: grey;
+        transform: translateX(${width - ((width/20)+1)}px)`;
+    roller.appendChild(d);
+
+    // right side
+    d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        transform-origin: 100% 50%;
+        width: ${width}px;
+        height: ${height}px;
+        background: rgb(120,120,120);
+        transform: translateX(${-width/20}px)  rotateY(-80deg)`;
+    roller.appendChild(d);
+
+    //top edge
+    d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        transform-origin: 50% 100%;
+        width: ${width + 2}px;
+        height: ${(width/20)+1}px;
+        background: grey;
+        transform: translateX(-1px)`;
+    roller.appendChild(d);
+
+    // top side
+    d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        transform-origin: 50% 0%;
+        width: ${width}px;
+        height: ${height}px;
+        background: rgb(100,100,100);
+        transform: translateY(${(width/20)}px)  rotateX(-80deg)`;
+    roller.appendChild(d);
+
+    //bottom edge
+    d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        width: ${width + 2}px;
+        height: ${(width/20)+1}px;
+        background: grey;
+        transform: translateX(-1px) translateY(${height-(width/20)-1}px)`;
+    roller.appendChild(d);
+
+
+    // bottom side
+    d = document.createElement("div");
+    d.style = `
+        position: absolute;
+        transform-origin: 50% 100%;
+        width: ${width}px;
+        height: ${height}px;
+        background: rgb(80,80,80);
+        transform: translateY(-${(width/20)}px)  rotateX(80deg)`;
+    roller.appendChild(d);
+
+
+    // How far back we push the roller so that it sits well in the viewport
+    let pushback = height * 0.9;
     let numSegs = svgs.length * segsPerImage;
     let zTranslate = height/2;
 
@@ -63,8 +157,6 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     // but also borks the images a bit when more segs per image are used.
     // could look into overlapping segments, sounds promising.
     segHeight = Math.trunc(segHeight) + 1;
-
-    let roller = document.createElement("div");
 
     // @ts-ignore
     roller.style = `
@@ -142,108 +234,12 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
 
                 /* border: 1px solid red;*/`;
 
-            seg.style.transform = `rotateX(-${360 * (i * segsPerImage + j) / numSegs}deg) translateZ(${zTranslate}px)`;
+            seg.style.transform = `translateZ(${-pushback}px)  rotateX(-${360 * (i * segsPerImage + j) / numSegs}deg) translateZ(${zTranslate}px)`;
 
             roller.appendChild(seg);
         }
 
     }
-
-    // Now add the viewing hole for the roller
-    // Use the xhtml namespace for create element so that we get an html element
-    // that has a style property.
-
-
-
-    //Front strut left
-    let d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        width: ${(width/20)+2}px;
-        height: ${height}px;
-        background: grey;
-        transform: translateX(-1px) translateZ(${height*0.9}px)`;
-    roller.appendChild(d);
-
-    // left side
-    d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        transform-origin: 0% 50%;
-        width: ${width}px;
-        height: ${height}px;
-        background: rgb(140,140,140);
-        transform: translateX(${width/20}px) translateZ(${height*0.9}px)  rotateY(80deg)`;
-    roller.appendChild(d);
-
-    //Front strut right
-    d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        width: ${(width/20)+2}px;
-        height: ${height}px;
-        background: grey;
-        transform: translateX(${width - ((width/20)+1)}px) translateZ(${height*0.9}px)`;
-    roller.appendChild(d);
-
-    // right side
-    d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        transform-origin: 100% 50%;
-        width: ${width}px;
-        height: ${height}px;
-        background: rgb(120,120,120);
-        transform: translateX(${-width/20}px) translateZ(${height*0.9}px)  rotateY(-80deg)`;
-    roller.appendChild(d);
-
-    //top edge
-    d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        transform-origin: 50% 100%;
-        width: ${width + 2}px;
-        height: ${(width/20)+1}px;
-        background: grey;
-        transform: translateX(-1px) translateZ(${height*0.9}px)`;
-    roller.appendChild(d);
-
-    // top side
-    d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        transform-origin: 50% 0%;
-        width: ${width}px;
-        height: ${height}px;
-        background: rgb(100,100,100);
-        transform: translateY(${(width/20)}px) translateZ(${height*0.9}px)  rotateX(-80deg)`;
-    roller.appendChild(d);
-
-    //bottom edge
-    d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        width: ${width + 2}px;
-        height: ${(width/20)+1}px;
-        background: grey;
-        transform: translateX(-1px) translateY(${height-(width/20)-1}px) translateZ(${height*0.9}px)`;
-    roller.appendChild(d);
-
-
-    // bottom side
-    d = document.createElement("div");
-    d.style = `
-        position: absolute;
-        transform-origin: 50% 100%;
-        width: ${width}px;
-        height: ${height}px;
-        background: rgb(80,80,80);
-        transform: translateY(-${(width/20)}px) translateZ(${height*0.9}px)  rotateX(80deg)`;
-    roller.appendChild(d);
-
-    
-
-      
 
     return roller;
 }
