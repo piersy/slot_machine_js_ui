@@ -225,8 +225,8 @@ for (let i = 0; i < rollers.length; i++) {
 }
 
 // Add lever
-let lever = document.createElement("div");
-lever.style = `
+let leverBase = document.createElement("div");
+leverBase.style = `
 position: absolute;
 width: ${leverWidth/2}vw;
 height: ${leverWidth}vw;
@@ -236,7 +236,34 @@ top: ${signHeight + rollerHeight/2 - leverWidth/2}vw;
 border-top-right-radius: ${leverWidth}vw;
 border-bottom-right-radius: ${leverWidth}vw;
 transform: translateZ(${-pushback}vw)`;
+scene.appendChild(leverBase);
+
+let lever = document.createElement("div");
+lever.style = `
+position: absolute;
+width: ${leverWidth/4}vw;
+height: ${signHeight + rollerHeight/2}vw;
+background: orange;
+left: ${rollerWidth*2.98}vw;
+top: 0vw;
+z-index: -1;
+transform-origin: 50% 100%;
+transform: translateZ(${-pushback}vw) rotateZ(25deg) translateY(${-leverWidth/3}vw);`;
 scene.appendChild(lever);
+
+let knob = document.createElement("div");
+knob.style = `
+position: absolute;
+width: ${leverWidth/1.5}vw;
+height: ${leverWidth/1.5}vw;
+border-radius: 50%;
+background: red;
+left: ${rollerWidth*2.98}vw;
+top: 0vw;
+z-index: -1;
+transform-origin: 50% 50%;
+transform: translateZ(${-pushback}vw) rotateZ(25deg) translateY(${-leverWidth/1.5}vw) translateX(${leverWidth/3.2}vw);`;
+scene.appendChild(knob);
 
 // rotate
 let rotateX = addRangeControl("Rotate x", -360, 360, 0);
