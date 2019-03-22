@@ -157,7 +157,8 @@ text-align: center;
 font-size: 3vw;
 font-weight: 500;
 font-family: Palm;
-line-height: ${signHeight/2}vw;`;  // The line height being the same height as the div centers the text vertically
+line-height: ${signHeight/2}vw;
+`;  // The line height being the same height as the div centers the text vertically
 upperSign.innerHTML = "Kitty Slots";
 sign.appendChild(upperSign);
 
@@ -230,7 +231,11 @@ leverBase.style = `
 position: absolute;
 width: ${leverWidth/2}vw;
 height: ${leverWidth}vw;
-background: red;
+background: radial-gradient(circle at top 0 right 25%,
+  white 10%,
+  rgb(231, 100, 100) 30%,
+  rgb(201, 70, 70) 40%,
+  rgb(131, 0, 0) 65%);
 left: ${rollerWidth*3}vw;
 top: ${signHeight + rollerHeight/2 - leverWidth/2}vw;
 border-top-right-radius: ${leverWidth}vw;
@@ -243,7 +248,13 @@ lever.style = `
 position: absolute;
 width: ${leverWidth/4}vw;
 height: ${signHeight + rollerHeight/2}vw;
-background: orange;
+background: linear-gradient(0.25turn, 
+rgb(120,120,120) 0%, 
+rgb(120,120,120) 33%, 
+rgb(100,100,100) 33%,
+rgb(100,100,100) 66%,
+rgb(80,80,80) 66%);
+rgb(80,80,80) 100%);
 left: ${rollerWidth*2.98}vw;
 top: 0vw;
 z-index: -1;
@@ -257,7 +268,13 @@ position: absolute;
 width: ${leverWidth/1.5}vw;
 height: ${leverWidth/1.5}vw;
 border-radius: 50%;
-background: red;
+background: radial-gradient(circle at top 0 right 25%,
+  white 10%,
+  rgb(231, 100, 100) 30%,
+  rgb(201, 70, 70) 40%,
+  rgb(131, 0, 0) 65%);
+
+
 left: ${rollerWidth*2.98}vw;
 top: 0vw;
 z-index: -1;
