@@ -102,7 +102,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         transform-origin: 100% 50%;
         width: ${width}vw;
         height: ${height}vw;
-        background: rgb(120,120,120);
+        background: rgb(100,100,100);
         transform: translateX(${-strutWidth}vw)  rotateY(-80deg)`;
     viewHole.appendChild(d);
 
@@ -124,7 +124,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         transform-origin: 50% 0%;
         width: ${width}vw;
         height: ${height}vw;
-        background: rgb(100,100,100);
+        background: rgb(80,80,80);
         transform: translateY(${strutWidth}vw)  rotateX(-80deg)`;
     viewHole.appendChild(d);
 
@@ -146,7 +146,7 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
         transform-origin: 50% 100%;
         width: ${width}vw;
         height: ${height}vw;
-        background: rgb(80,80,80);
+        background: rgb(120,120,120);
         transform: translateY(-${strutWidth}vw)  rotateX(80deg)`;
     viewHole.appendChild(d);
 

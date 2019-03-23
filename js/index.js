@@ -233,12 +233,12 @@ position: absolute;
 width: ${leverWidth/7}vw;
 height: ${rollerHeight}vw;
 background: linear-gradient(0.25turn, 
-rgb(120,120,120) 0%, 
-rgb(120,120,120) 33%, 
+rgb(80,80,80) 0%, 
+rgb(80,80,80) 33%, 
 rgb(100,100,100) 33%,
 rgb(100,100,100) 66%,
-rgb(80,80,80) 66%);
-rgb(80,80,80) 100%);
+rgb(120,120,120) 66%);
+rgb(120,120,120) 100%);
 left: ${rollerWidth*2.98}vw;
 top: 0vw;
 z-index: -1;
@@ -253,10 +253,12 @@ width: ${leverWidth/2}vw;
 height: ${leverWidth/2}vw;
 border-radius: 50%;
 background: radial-gradient(circle at top 0 right 25%,
-  white 10%,
-  rgb(231, 100, 100) 30%,
-  rgb(201, 70, 70) 40%,
-  rgb(131, 0, 0) 65%);
+  rgb(255, 235, 235) 10%,
+  rgb(255, 0, 0) 15%,
+  rgb(255, 0, 0) 20%,
+  rgb(200, 0, 0) 25%,
+  rgb(200, 0, 0) 50%,
+  rgb(131, 0, 0) 70%);
 
 
 left: ${rollerWidth*2.98}vw;
