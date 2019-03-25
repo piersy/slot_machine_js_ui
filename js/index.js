@@ -121,7 +121,7 @@ sceneWidth = 100 * sceneWidth / window.innerWidth;
 scene.style.width = `${sceneWidth}vw`;
 let rollerAspectRatio = 1;
 let rollerWidth = sceneWidth / 4; // scene is 3 rollers + a lever
-let leverWidth = rollerWidth*0.6;
+let leverWidth = rollerWidth * 0.6;
 let rollersWidth = rollerWidth * 3;
 let rollerHeight = rollerWidth / rollerAspectRatio;
 
@@ -133,7 +133,7 @@ scene.style.margin = `${rollerHeight / 10}vw auto`;
 let boxContainer = document.createElement("div");
 boxContainer.style = `
 width: ${rollersWidth}vw;
-height: ${rollerHeight*2}vw;`;
+height: ${rollerHeight * 2}vw;`;
 scene.appendChild(boxContainer);
 
 // Add sign
@@ -157,7 +157,7 @@ text-align: center;
 font-size: 3vw;
 font-weight: 500;
 font-family: Palm;
-line-height: ${signHeight/2}vw;
+line-height: ${signHeight / 2}vw;
 `;  // The line height being the same height as the div centers the text vertically
 upperSign.innerHTML = "Kitty Slots";
 sign.appendChild(upperSign);
@@ -192,8 +192,9 @@ for (let i = 0; i < viewHoles.length; i++) {
   const v = viewHoles[i];
   // Position because rollers are absolute;
   v.style.left = `${i * rollerWidth}vw`;
-  // Make sure this doesn't catch clicks so we can click the roller
-  v.style.pointerEvents = "none";
+  v.onclick = () => {
+    console.log("ffff");
+  };
   boxContainer.appendChild(v);
 }
 
@@ -220,6 +221,7 @@ for (let i = 0; i < rollers.length; i++) {
 
   // Add toggleable rotation to the rollers
   r.onclick = () => {
+    console.log("woo");
     r.style.animation = r.style.animation == '' ? 'spin 4s 1' : '';
   };
   boxContainer.appendChild(r);
@@ -228,10 +230,60 @@ for (let i = 0; i < rollers.length; i++) {
 // Add lever
 
 let lever = document.createElement("div");
+
+let sides = 6;
+let strutWidth = leverWidth / 7;
+let zTranslate = strutWidth/2;
+
+// Find the angle between adjacent segments.
+// Angle inside a regular polygon is (n-2) × PI / n where n is the number of
+// sides.
+let betweenSides = (sides - 2) * Math.PI / sides;
+
+// Find seg height, it will be twice the adjacent side of the triangle with
+// opposite side of length zTranslate and angle betweenSides/2;
+let segWidth = 2 * zTranslate / Math.tan(betweenSides / 2);
+
+// create strut
+for (let i = 0; i < 6; i++) {
+
+  let seg = document.createElement("div");
+
+  // @ts-ignore
+  seg.style = `
+  position: absolute;
+  width: calc(${segWidth}vw + 1px); /* The added pixel closes the gaps in rendering */
+  height: calc(${rollerHeight}vw); 
+  background: grey;
+
+  /* ensure transforms happen around the center of the segment */
+  transform-origin: 50% 50%;
+
+  /*
+  position the segment in the center of it's parent, so push
+  it half the height of its parent down and then pull it
+  up by half of its height
+  */
+  
+  left: 50%;
+  margin-left: ${-segWidth / 2}vw;
+  
+
+  /* border: 1px solid red; */`;
+
+  seg.style.transform = `rotateY(${360 * i / sides}deg) translateZ(${zTranslate}vw)`;
+  lever.appendChild(seg);
+}
+
+
+let leverLean = 30;
+
+
 lever.style = `
 position: absolute;
-width: ${leverWidth/7}vw;
+width: ${strutWidth}vw;
 height: ${rollerHeight}vw;
+/*
 background: linear-gradient(0.25turn, 
 rgb(80,80,80) 0%, 
 rgb(80,80,80) 33%, 
@@ -239,18 +291,21 @@ rgb(100,100,100) 33%,
 rgb(100,100,100) 66%,
 rgb(120,120,120) 66%);
 rgb(120,120,120) 100%);
-left: ${rollerWidth*2.98}vw;
-top: 0vw;
+*/
+left: ${(rollerWidth * 3) - strutWidth}vw;
+top: ${signHeight-rollerHeight/2}vw;
 z-index: -1;
+transform-style: preserve-3d;
 transform-origin: 50% 100%;
-transform: translateY(${-rollerHeight/8}vw) translateZ(${-pushback}vw) rotateZ(25deg);`;
+transform:  rotateZ(${leverLean}deg) translateZ(${-pushback}vw) rotateX(-0deg);
+border: 1px solid red;`;
 scene.appendChild(lever);
 
 let knob = document.createElement("div");
 knob.style = `
 position: absolute;
-width: ${leverWidth/2}vw;
-height: ${leverWidth/2}vw;
+width: ${strutWidth * 4}vw;
+height: ${strutWidth *4}vw;
 border-radius: 50%;
 background: radial-gradient(circle at top 0 right 25%,
   rgb(255, 235, 235) 10%,
@@ -261,12 +316,26 @@ background: radial-gradient(circle at top 0 right 25%,
   rgb(131, 0, 0) 70%);
 
 
-left: ${rollerWidth*2.98}vw;
-top: 0vw;
-z-index: -1;
-transform-origin: 50% 50%;
-transform: translateZ(${-pushback}vw) rotateZ(25deg)  translateY(${-leverWidth/2}vw)  translateX(${leverWidth/2.9}vw);`;
+left: ${(rollerWidth * 3)-strutWidth*2.5 + rollerHeight*Math.sin(leverLean * Math.PI/180)}vw;
+top: ${signHeight-rollerHeight/2-strutWidth*2 + rollerHeight - (rollerHeight *Math.cos(leverLean * Math.PI/180))}vw;
+transform: translateZ(${-pushback+ strutWidth/2}vw);
+
+z-index: 2;
+transform-origin: 50% 50%;`;
 scene.appendChild(knob);
+
+let startPull;
+knob.onmousedown = (ev) => {
+  startPull = ev.clientY;
+  knob.onmousemove = (ev) => {
+  };
+};
+
+knob.onmouseup = () => {
+  knob.onmousemove = null;
+};
+
+// Let us pull the lever we will need the lever in a single div for this
 
 // rotate
 let rotateX = addRangeControl("Rotate x", -360, 360, 0);

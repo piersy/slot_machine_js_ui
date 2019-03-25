@@ -7,6 +7,10 @@ body {
     position: relative;
 }
 
+*:hover{
+    border: 2px dotted black;
+}
+
 .scene {
     transform-style: preserve-3d;
 }
@@ -18,7 +22,7 @@ svg {
     height: 5vw;
 }
 
-
+#
 #verticalAlign {
     text-align: center;
     font-size: 2rem;
