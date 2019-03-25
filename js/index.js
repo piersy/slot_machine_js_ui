@@ -195,9 +195,6 @@ for (let i = 0; i < viewHoles.length; i++) {
   const v = viewHoles[i];
   // Position because rollers are absolute;
   v.style.left = `${i * rollerWidth}vw`;
-  v.onclick = () => {
-    console.log("ffff");
-  };
   boxContainer.appendChild(v);
 }
 
@@ -224,7 +221,6 @@ for (let i = 0; i < rollers.length; i++) {
 
   // Add toggleable rotation to the rollers
   r.onclick = () => {
-    console.log("woo");
     r.style.animation = r.style.animation == '' ? 'spin 4s 1' : '';
   };
   boxContainer.appendChild(r);
@@ -263,7 +259,6 @@ for (let i = 0; i < 6; i++) {
   let seg = document.createElement("div");
 
   let shade = 80 + ((20*(i+2))%60);
-  console.log(shade);
   // @ts-ignore
   seg.style = `
   position: absolute;
@@ -324,7 +319,9 @@ background: radial-gradient(circle at top 0 right 25%,
   transform-origin: 50% 50%;`;
   scene.appendChild(knob);
 
-  
+
+let rotateAngle;
+let verticalLeverHeight;
 /**
  * Positions the lever with respect to where the user has dragged it.
  * @param {number} yoffset
@@ -336,17 +333,17 @@ function positionLever(yoffset) {
   // convert offset to vw as opposed to pixels
   yoffset = yoffset*100/window.innerWidth;
 
-  let verticalLeverHeight = rollerHeight * Math.cos(leverLean * Math.PI/180);
+  verticalLeverHeight = rollerHeight * Math.cos(leverLean * Math.PI/180);
   let currentHeight = verticalLeverHeight - yoffset;
-  let rotateAngle = Math.acos(currentHeight/verticalLeverHeight);
+  rotateAngle = -Math.acos(currentHeight/verticalLeverHeight);
 
   strut.style.transform = `rotateZ(${leverLean}deg)`;
-  lever.style.transform = `translateZ(${-pushback}vw) rotateX(-${rotateAngle*180/Math.PI}deg)`;
+  lever.style.transform = `translateZ(${-pushback}vw) rotateX(${rotateAngle*180/Math.PI}deg)`;
 
 
   knob.style.left = `${(rollerWidth * 3)-strutWidth*2.5 + rollerHeight*Math.sin(leverLean * Math.PI/180)}vw`;
   knob.style.top = `${signHeight-rollerHeight/2-strutWidth*2 + rollerHeight - verticalLeverHeight + yoffset}vw`;
-  knob.style.transform = `translateZ(${-pushback + strutWidth + verticalLeverHeight * Math.sin(rotateAngle)}vw)`;
+  knob.style.transform = `translateZ(${-pushback + strutWidth + verticalLeverHeight * Math.sin(-rotateAngle)}vw)`;
 }
 // Set initial lever position
 positionLever(0);
@@ -354,16 +351,31 @@ positionLever(0);
 
 let startPull;
 knob.onmousedown = (ev) => {
-  console.log("mousdown");
   startPull = ev.clientY;
   window.onmousemove = (ev) => {
-    console.log("mousemove", ev.clientY - startPull);
     positionLever(ev.clientY - startPull);
   };
 };
 
+let deltaRotate = Math.PI/1000;
+
+
 window.onmouseup = () => {
   window.onmousemove = null;
+  let timer = setInterval(()=>{
+    if(rotateAngle+deltaRotate > 0){
+      positionLever(0);
+      deltaRotate = Math.PI/1000;
+      clearInterval(timer);
+      return;
+    }
+    let currentHeight = verticalLeverHeight - verticalLeverHeight * Math.cos(rotateAngle+deltaRotate);
+    //convert to pixels.
+    currentHeight = currentHeight* window.innerWidth/100;
+    deltaRotate += deltaRotate*1.1;
+
+    positionLever(currentHeight);
+  },20);
 };
 
 // Let us pull the lever we will need the lever in a single div for this
