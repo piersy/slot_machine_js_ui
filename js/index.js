@@ -201,13 +201,9 @@ for (let i = 0; i < viewHoles.length; i++) {
 // Amount by which we push the roller back to sit in the viewHole.
 let pushback = rollerHeight * 0.8;
 
-// Roller animation
+// Roller animation base element
 let style = document.createElement('style');
 style.type = 'text/css';
-style.innerHTML = `@keyframes spin {
-  0% { transform: translateZ(${-pushback}vw) rotateX(0deg); }
-100% { transform: translateZ(${-pushback}vw) rotateX(720deg); }
-}`;
 document.getElementsByTagName('head')[0].appendChild(style);
 
 
@@ -218,11 +214,6 @@ for (let i = 0; i < rollers.length; i++) {
   r.style.transform = `translateZ(${-pushback}vw)`;
 
 
-
-  // Add toggleable rotation to the rollers
-  r.onclick = () => {
-    r.style.animation = r.style.animation == '' ? 'spin 4s 1' : '';
-  };
   boxContainer.appendChild(r);
 }
 
@@ -376,6 +367,29 @@ window.onmouseup = () => {
 
     positionLever(currentHeight);
   },20);
+
+  // set roller animations up
+  
+  let rollDegreesBase = 3600;
+  let rollTimes = [];
+  let animCss = "";
+  for (let i = 0; i < rollers.length; i++) {
+    let rollTimeSeconds = 2+2*Math.random();
+    rollTimes.push(rollTimeSeconds);
+    animCss += `@keyframes spin${i} {
+      0% { transform: translateZ(${-pushback}vw) rotateX(0deg); }
+    100% { transform: translateZ(${-pushback}vw) rotateX(${rollDegreesBase * rollTimeSeconds/4}deg); }
+    }
+    `;
+  }
+
+  style.innerHTML = animCss;
+
+  for (let i = 0; i < rollers.length; i++) {
+    const r = rollers[i];
+    // Add toggleable rotation to the rollers
+    r.style.animation = r.style.animation == '' ? `spin${i} ${rollTimes[i]}s 1` : '';
+  }
 };
 
 // Let us pull the lever we will need the lever in a single div for this
