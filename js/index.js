@@ -78,6 +78,9 @@ originY.input.onchange = originY.input.oninput = updatePerspectiveOrigin;
 updatePerspectiveOrigin(); //Ensure values initialised
 
 
+/**
+ * @param {any[] | rol.SVG[]} array
+ */
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -229,11 +232,21 @@ for (let i = 0; i < rollers.length; i++) {
 
 // Add lever
 
-let lever = document.createElement("div");
+let strut = document.createElement("div");
 
 let sides = 6;
 let strutWidth = leverWidth / 7;
 let zTranslate = strutWidth/2;
+
+strut.style = `
+position: absolute;
+width: ${strutWidth}vw;
+height: ${rollerHeight}vw;
+transform-style: preserve-3d;
+transform-origin: 50% 100%;
+/* border: 1px solid red; */`;
+
+
 
 // Find the angle between adjacent segments.
 // Angle inside a regular polygon is (n-2) × PI / n where n is the number of
@@ -249,6 +262,8 @@ for (let i = 0; i < 6; i++) {
 
   let seg = document.createElement("div");
 
+  let shade = 80 + ((20*(i+2))%60);
+  console.log(shade);
   // @ts-ignore
   seg.style = `
   position: absolute;
@@ -264,7 +279,7 @@ for (let i = 0; i < 6; i++) {
   it half the height of its parent down and then pull it
   up by half of its height
   */
-  
+  background: rgb(${shade},${shade},${shade});
   left: 50%;
   margin-left: ${-segWidth / 2}vw;
   
@@ -272,33 +287,25 @@ for (let i = 0; i < 6; i++) {
   /* border: 1px solid red; */`;
 
   seg.style.transform = `rotateY(${360 * i / sides}deg) translateZ(${zTranslate}vw)`;
-  lever.appendChild(seg);
+  strut.appendChild(seg);
 }
 
 
 let leverLean = 30;
 
-
+let lever = document.createElement("div");
 lever.style = `
 position: absolute;
 width: ${strutWidth}vw;
 height: ${rollerHeight}vw;
-/*
-background: linear-gradient(0.25turn, 
-rgb(80,80,80) 0%, 
-rgb(80,80,80) 33%, 
-rgb(100,100,100) 33%,
-rgb(100,100,100) 66%,
-rgb(120,120,120) 66%);
-rgb(120,120,120) 100%);
-*/
 left: ${(rollerWidth * 3) - strutWidth}vw;
 top: ${signHeight-rollerHeight/2}vw;
-z-index: -1;
 transform-style: preserve-3d;
 transform-origin: 50% 100%;
-transform:  rotateZ(${leverLean}deg) translateZ(${-pushback}vw) rotateX(-0deg);
-border: 1px solid red;`;
+/* border: 1px solid red; */`;
+lever.appendChild(strut);
+
+
 scene.appendChild(lever);
 
 let knob = document.createElement("div");
@@ -314,25 +321,49 @@ background: radial-gradient(circle at top 0 right 25%,
   rgb(200, 0, 0) 25%,
   rgb(200, 0, 0) 50%,
   rgb(131, 0, 0) 70%);
+  transform-origin: 50% 50%;`;
+  scene.appendChild(knob);
+
+  
+/**
+ * Positions the lever with respect to where the user has dragged it.
+ * @param {number} yoffset
+ */
+function positionLever(yoffset) {
+  // ignore negative offsets
+  yoffset = yoffset < 0 ? 0 : yoffset;
+
+  // convert offset to vw as opposed to pixels
+  yoffset = yoffset*100/window.innerWidth;
+
+  let verticalLeverHeight = rollerHeight * Math.cos(leverLean * Math.PI/180);
+  let currentHeight = verticalLeverHeight - yoffset;
+  let rotateAngle = Math.acos(currentHeight/verticalLeverHeight);
+
+  strut.style.transform = `rotateZ(${leverLean}deg)`;
+  lever.style.transform = `translateZ(${-pushback}vw) rotateX(-${rotateAngle*180/Math.PI}deg)`;
 
 
-left: ${(rollerWidth * 3)-strutWidth*2.5 + rollerHeight*Math.sin(leverLean * Math.PI/180)}vw;
-top: ${signHeight-rollerHeight/2-strutWidth*2 + rollerHeight - (rollerHeight *Math.cos(leverLean * Math.PI/180))}vw;
-transform: translateZ(${-pushback+ strutWidth/2}vw);
+  knob.style.left = `${(rollerWidth * 3)-strutWidth*2.5 + rollerHeight*Math.sin(leverLean * Math.PI/180)}vw`;
+  knob.style.top = `${signHeight-rollerHeight/2-strutWidth*2 + rollerHeight - verticalLeverHeight + yoffset}vw`;
+  knob.style.transform = `translateZ(${-pushback + strutWidth + verticalLeverHeight * Math.sin(rotateAngle)}vw)`;
+}
+// Set initial lever position
+positionLever(0);
 
-z-index: 2;
-transform-origin: 50% 50%;`;
-scene.appendChild(knob);
 
 let startPull;
 knob.onmousedown = (ev) => {
+  console.log("mousdown");
   startPull = ev.clientY;
-  knob.onmousemove = (ev) => {
+  window.onmousemove = (ev) => {
+    console.log("mousemove", ev.clientY - startPull);
+    positionLever(ev.clientY - startPull);
   };
 };
 
-knob.onmouseup = () => {
-  knob.onmousemove = null;
+window.onmouseup = () => {
+  window.onmousemove = null;
 };
 
 // Let us pull the lever we will need the lever in a single div for this

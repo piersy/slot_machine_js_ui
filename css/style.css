@@ -7,9 +7,9 @@ body {
     position: relative;
 }
 
-*:hover{
+/* *:hover{
     border: 2px dotted black;
-}
+} */
 
 .scene {
     transform-style: preserve-3d;
