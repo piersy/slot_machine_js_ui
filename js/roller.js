@@ -173,7 +173,8 @@ export function CreateRoller(width, height, svgs, segsPerImage) {
     position: absolute;
     transform-origin: 50% 50%;
     transform-style: preserve-3d;
-    animation-fill-mode: forwards;`;
+    animation-fill-mode: forwards;
+    user-select: none;`;
 
     /*
     The default approach taken by fragment identifiers to mapping the viewbox to

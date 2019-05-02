@@ -342,6 +342,7 @@ positionLever(0);
 
 let startPull;
 knob.onmousedown = (ev) => {
+  window.onmouseup = letGoOfLever;
   startPull = ev.clientY;
   window.onmousemove = (ev) => {
     positionLever(ev.clientY - startPull);
@@ -350,9 +351,9 @@ knob.onmousedown = (ev) => {
 
 let deltaRotate = Math.PI/1000;
 
-
-window.onmouseup = () => {
-  window.onmousemove = null;
+let letGoOfLever = () => {
+  window. = null;
+  window.onmouseup = null;
   let timer = setInterval(()=>{
     if(rotateAngle+deltaRotate > 0){
       positionLever(0);
@@ -383,12 +384,24 @@ window.onmouseup = () => {
     `;
   }
 
+
+  // Set little rotate on mouse move.
+  document.addEventListener('mousemove', (ev) => {
+    console.log("viewrotate",ev.clientX);
+    scene.style.transform = `
+    rotateX(${ev.clientX})
+    rotateY(${ev.clientY})
+    rotateZ(0)`;
+  });
+
   style.innerHTML = animCss;
 
   for (let i = 0; i < rollers.length; i++) {
     const r = rollers[i];
     // Add toggleable rotation to the rollers
-    r.style.animation = r.style.animation == '' ? `spin${i} ${rollTimes[i]}s 1` : '';
+    r.style.animation = r.style.animation == '' ? `spin${i} ${rollTimes[i]}s ease-out 0s 1 normal forwards running` : '';
+    // spin0 3.01363s ease-in 0s 1 normal forwards running;
+    
   }
 };
 
@@ -400,17 +413,17 @@ let rotateY = addRangeControl("Rotate y", -360, 360, 0);
 let rotateZ = addRangeControl("Rotate z", -360, 360, 0);
 
 function updateTransform() {
-  let x = rotateX.input.value + "deg";
-  let y = rotateY.input.value + "deg";
-  let z = rotateZ.input.value + "deg";
-  // @ts-ignore
-  scene.style.transform = `
-  rotateX(${x})
-  rotateY(${y})
-  rotateZ(${z})`;
-  rotateX.display.innerHTML = x;
-  rotateY.display.innerHTML = y;
-  rotateZ.display.innerHTML = z;
+  // let x = rotateX.input.value + "deg";
+  // let y = rotateY.input.value + "deg";
+  // let z = rotateZ.input.value + "deg";
+  // // @ts-ignore
+  // scene.style.transform = `
+  // rotateX(${x})
+  // rotateY(${y})
+  // rotateZ(${z})`;
+  // rotateX.display.innerHTML = x;
+  // rotateY.display.innerHTML = y;
+  // rotateZ.display.innerHTML = z;
 }
 
 rotateX.input.onchange = rotateX.input.oninput = updateTransform;
