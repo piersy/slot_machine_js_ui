@@ -386,15 +386,8 @@ let letGoOfLever = () => {
     `;
   }
 
-
-  // Set little rotate on mouse move.
-  document.addEventListener('mousemove', (ev) => {
-    // console.log("viewrotate",ev.clientX);
-    scene.style.transform = `
-    rotateX(${ev.clientX})
-    rotateY(${ev.clientY})
-    rotateZ(0)`;
-  });
+	// Re set perspective shift
+	window.onmousemove = perspectiveShift;
 
   style.innerHTML = animCss;
 
@@ -407,16 +400,19 @@ let letGoOfLever = () => {
   }
 };
 
-  //  Set little rotate on mouse move.
-window.onmousemove = (ev) => {
-	console.log("viewrotate",ev.clientX);
-	const x = 10 * ev.clientX/window.innerWidth;
-	const y = 10 * ev.clientY/window.innerHeight;
-	scene.style.transform = `
-		 rotateX(${x}deg)
-		 rotateY(${y}deg)
-		 rotateZ(0deg)`;
+function perspectiveShift(ev){
+	// Get + or - relative to window centre
+	let x = ev.clientX - (window.innerWidth/2);
+	let y = ev.clientY - (window.innerHeight/2);
+	// normalize to window width and add to 50 since centre is 50% for perspectiveOrigin.
+	x = 50 - 10*x / window.innerWidth;
+	y = 50 - 10*y / window.innerHeight;
+  scene.style.perspectiveOrigin = x+'%'+' '+y+'%';
 };
+
+
+//  Set little rotate on mouse move.
+window.onmousemove =perspectiveShift;
 
 // Let us pull the lever we will need the lever in a single div for this
 
