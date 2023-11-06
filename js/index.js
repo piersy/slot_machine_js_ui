@@ -136,7 +136,8 @@ scene.style.margin = `${rollerHeight / 10}vw auto`;
 let boxContainer = document.createElement("div");
 boxContainer.style = `
 width: ${rollersWidth}vw;
-height: ${rollerHeight * 2}vw;`;
+height: ${rollerHeight * 2}vw;
+transform-style: preserve-3d;`;
 scene.appendChild(boxContainer);
 
 // Add sign
@@ -145,9 +146,9 @@ let sign = document.createElement("div");
 sign.style = `
 display: flex;
 flex-direction: column;
-align-items: center;`;
+align-items: center;
+transform-style: preserve-3d;`;
 boxContainer.appendChild(sign);
-
 
 let upperSign = document.createElement("div");
 upperSign.style = `
@@ -160,8 +161,8 @@ text-align: center;
 font-size: 3vw;
 font-weight: 500;
 font-family: Palm;
-line-height: ${signHeight / 2}vw;
-`;  // The line height being the same height as the div centers the text vertically
+line-height: ${signHeight/2}vw;  // The line height being the same height as the div centers the text vertically
+transform-style: preserve-3d;`;
 upperSign.innerHTML = "Kitty Slots";
 sign.appendChild(upperSign);
 
@@ -171,7 +172,8 @@ width: ${rollersWidth}vw;
 height: ${signHeight / 2}vw;
 border-top-left-radius: ${signHeight / 2}vw;
 border-top-right-radius: ${signHeight / 2}vw;
-background: grey;`;
+background: grey;
+transform-style: preserve-3d;`;
 sign.appendChild(lowerSign);
 
 let rollers = [];
@@ -352,7 +354,7 @@ knob.onmousedown = (ev) => {
 let deltaRotate = Math.PI/1000;
 
 let letGoOfLever = () => {
-  window. = null;
+	window.onmousemove = null;
   window.onmouseup = null;
   let timer = setInterval(()=>{
     if(rotateAngle+deltaRotate > 0){
@@ -387,7 +389,7 @@ let letGoOfLever = () => {
 
   // Set little rotate on mouse move.
   document.addEventListener('mousemove', (ev) => {
-    console.log("viewrotate",ev.clientX);
+    // console.log("viewrotate",ev.clientX);
     scene.style.transform = `
     rotateX(${ev.clientX})
     rotateY(${ev.clientY})
@@ -405,6 +407,17 @@ let letGoOfLever = () => {
   }
 };
 
+  //  Set little rotate on mouse move.
+window.onmousemove = (ev) => {
+	console.log("viewrotate",ev.clientX);
+	const x = 10 * ev.clientX/window.innerWidth;
+	const y = 10 * ev.clientY/window.innerHeight;
+	scene.style.transform = `
+		 rotateX(${x}deg)
+		 rotateY(${y}deg)
+		 rotateZ(0deg)`;
+};
+
 // Let us pull the lever we will need the lever in a single div for this
 
 // rotate
@@ -413,17 +426,17 @@ let rotateY = addRangeControl("Rotate y", -360, 360, 0);
 let rotateZ = addRangeControl("Rotate z", -360, 360, 0);
 
 function updateTransform() {
-  // let x = rotateX.input.value + "deg";
-  // let y = rotateY.input.value + "deg";
-  // let z = rotateZ.input.value + "deg";
-  // // @ts-ignore
-  // scene.style.transform = `
-  // rotateX(${x})
-  // rotateY(${y})
-  // rotateZ(${z})`;
-  // rotateX.display.innerHTML = x;
-  // rotateY.display.innerHTML = y;
-  // rotateZ.display.innerHTML = z;
+//   let x = rotateX.input.value + "deg";
+//   let y = rotateY.input.value + "deg";
+//   let z = rotateZ.input.value + "deg";
+//   // @ts-ignore
+//   scene.style.transform = `
+//   rotateX(${x})
+//   rotateY(${y})
+//   rotateZ(${z})`;
+//   rotateX.display.innerHTML = x;
+//   rotateY.display.innerHTML = y;
+//   rotateZ.display.innerHTML = z;
 }
 
 rotateX.input.onchange = rotateX.input.oninput = updateTransform;
